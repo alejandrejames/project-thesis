@@ -118,8 +118,12 @@ def ldamdl(corpus,data_lemmatized):
     doc_lda = lda_model[corpus]
     vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
     pyLDAvis.save_html(vis, 'LDA_Visualization.html')
-    new = 2
-    webbrowser.open('LDA_Visualization.html',new=new)
+    
+def mallda(corpus,data_lemmatized):
+    id2word = corpora.Dictionary(data_lemmatized)
+    mallet_path = "C:/Users/Asus/Documents/project-thesis/mallet-2.0.8/bin/mallet"
+    ldamallet = gensim.models.wrappers.LdaMallet(mallet_path, corpus=corpus, num_topics=20, id2word=id2word)
+    pprint(ldamallet.show_topics(formatted=False))
     
 def nmfmdl(data):
     num_topics = 20
