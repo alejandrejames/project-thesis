@@ -6,11 +6,11 @@ import webbrowser
 
 
 name = 'sample.csv'
-#usmdls.collectdata('albay')
+usmdls.collectdata('albay')
 
 ##Data Cleaning
-cleaned = t2.cleaning(name)
-corpus = t2.mkcorpus(cleaned)
+#cleaned = t2.cleaning(name)
+#corpus = t2.mkcorpus(cleaned)
 #
 
 ##Topic Modeling
@@ -18,7 +18,7 @@ corpus = t2.mkcorpus(cleaned)
 #new = 2
 #webbrowser.open('LDA_Visualization.html',new=new)
 
-t2.mallda(corpus,cleaned) #LDA Mallet Model
+#t2.mallda(corpus,cleaned) #LDA Mallet Model
 
 #t2.nmfmdl(cleaned) #NMF Model
 #

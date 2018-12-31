@@ -27,6 +27,7 @@ stop_words = stopwords.words('english')
 stop_words.extend(['from', 'subject', 're', 'edu', 'use'])
 
 def cleaning(csvname):
+    print("Cleaning...")
     ##Input file
     data = pd.read_csv(csvname, 
     error_bad_lines=False)
@@ -90,6 +91,7 @@ def cleaning(csvname):
     return data_lemmatized
 
 def mkcorpus(data_lemmatized):
+    print("Creating corpus")
     ##Creating the corpus
     # Create Dictionary
     id2word = corpora.Dictionary(data_lemmatized)
@@ -120,10 +122,15 @@ def ldamdl(corpus,data_lemmatized):
     pyLDAvis.save_html(vis, 'LDA_Visualization.html')
     
 def mallda(corpus,data_lemmatized):
+    print("Traning..")
     id2word = corpora.Dictionary(data_lemmatized)
     mallet_path = "C:/Users/Asus/Documents/project-thesis/mallet-2.0.8/bin/mallet"
     ldamallet = gensim.models.wrappers.LdaMallet(mallet_path, corpus=corpus, num_topics=20, id2word=id2word)
-    pprint(ldamallet.show_topics(formatted=False))
+    print(ldamallet.show_topics(formatted=True))
+    data = ldamallet.show_topics(formatted=False)
+    #vis = pyLDAvis.gensim.prepare(ldamallet, corpus, id2word)
+    #pyLDAvis.save_html(vis, 'LDA_Visualization.html')
+    return data
     
 def nmfmdl(data):
     num_topics = 20
