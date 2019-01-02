@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Topic Analysis Tool Results</title>
+	<!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="HTMLFiles/css/bootstrap.min.css">
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="HTMLFiles/css/bootstrap-theme.min.css">
+</head>
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Topic Analysis on Mayon Volcano Eruption Tweets</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <br><br><br><br><br>
+      <div>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#Table" aria-controls="Table" role="tab" data-toggle="tab">Tabular</a></li>
+          <li role="presentation"><a href="#Visual" aria-controls="visual" role="tab" data-toggle="tab">Visualization</a></li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane active" id="Table">
+            <div class="container-fluid">
+              <div class="col-md-6">
+                <h3>Latent Dirichlet Allocation(LDA) Topics</h3>
+                <table class="table table-hover table-bordered">
+                  <thead>
+                    <th>Topic No.</th>
+                    <th>Words</th>
+                  </thead>
+                  <tbody><tr><td>Topic0</td><td>0 0.137-albay , 0.050-province , 0.041-eastern , 0.041-north , 0.041-locate , 0.041-ongjoco , 0.041-ann , 0.041-order , 0.041-tandarora , 0.041-preventive</td></tr> <tr><td>Topic1</td><td>1 0.039-brgy , 0.027-charge , 0.019-rtsinfo , 0.019-tqdu , 0.019-howardrjohnson , 0.019-die , 0.019-believe , 0.019-phillipine , 0.019-semble , 0.019-rtsvideo</td></tr> <tr><td>Topic2</td><td>2 0.040-camalig , 0.039-area , 0.039-also , 0.017-beraxulhmpq , 0.017-instagram , 0.017-leave , 0.017-jewelmelissa_w , 0.017-hope , 0.017-deadly , 0.017-see</td></tr> <tr><td>Topic3</td><td>3 0.110-stay , 0.032-advise , 0.032-summit , 0.032-tourist , 0.032-local , 0.032-away , 0.016-wwn , 0.016-dw_wissenschaft , 0.008-vulkanforschung , 0.008-warnt</td></tr> <tr><td>Topic4</td><td>4 0.025-huge , 0.025-plume , 0.020-der , 0.020-send , 0.020-und , 0.020-vulkan , 0.020-smoke , 0.020-would , 0.020-php , 0.017-apple</td></tr> <tr><td>Topic5</td><td>5 0.076-danger , 0.076-update , 0.038-volcano , 0.027-bulletin , 0.024-active , 0.022-report , 0.017-late , 0.017-come , 0.017-time , 0.017-gov</td></tr> <tr><td>Topic6</td><td>6 0.134-com , 0.123-https , 0.115-twitter , 0.114-eruption , 0.086-status , 0.083-mayon , 0.052-volcano , 0.045-mean , 0.020-http , 0.017-news</td></tr> <tr><td>Topic7</td><td>7 0.125-com , 0.111-twitter , 0.100-tendency , 0.069-status , 0.063-https , 0.045-evacuation , 0.036-pic , 0.034-volcan , 0.029-ash , 0.023-http</td></tr> <tr><td>Topic8</td><td>8 0.097-html , 0.053-imminent , 0.023-sthash , 0.016-sign , 0.016-show , 0.012-facebook , 0.012-bhji , 0.012-uxfs , 0.012-social , 0.012-livescience</td></tr> <tr><td>Topic9</td><td>9 0.065-http , 0.064-bit , 0.048-safety , 0.045-woman , 0.045-displace , 0.045-refo , 0.045-dignity , 0.038-help , 0.038-girl , 0.038-unfpaph</td></tr> <tr><td>Topic10</td><td>10 0.113-lava , 0.089-https , 0.079-com , 0.077-flow , 0.073-status , 0.066-twitter , 0.039-observe , 0.025-evacuate , 0.025-people , 0.018-fountain</td></tr> <tr><td>Topic11</td><td>11 0.088-vous , 0.088-environ , 0.088-ete , 0.088-dan , 0.010-ivan , 0.010-balita , 0.010-accord , 0.010-xymom , 0.010-pepengpacool , 0.010-otq</td></tr> <tr><td>Topic12</td><td>12 0.183-resident , 0.096-increase , 0.064-philippine , 0.043-cgtnofficial , 0.043-pbjlbsyd , 0.043-heirigogakumi , 0.043-ningitochibika , 0.030-photo , 0.024-pic , 0.014-molten</td></tr> <tr><td>Topic13</td><td>13 0.030-even , 0.014-unscientific , 0.014-moon , 0.014-perigee , 0.014-pronounce , 0.014-scientific , 0.014-super , 0.014-term , 0.014-total , 0.014-lunareclipse</td></tr> <tr><td>Topic14</td><td>14 0.017-ii , 0.017-ydjx , 0.017-unseenhugot , 0.002-gila , 0.002-sunday , 0.002-pakitang , 0.002-nag , 0.002-bicol , 0.002-bit , 0.002-twitter</td></tr> <tr><td>Topic15</td><td>15 0.069-twitter , 0.068-com , 0.061-mayon , 0.047-mayonvolcano , 0.047-philippin , 0.046-volcano , 0.036-eruption , 0.035-status , 0.034-https , 0.032-pic</td></tr> <tr><td>Topic16</td><td>16 0.167-january , 0.043-affect , 0.025-family , 0.022-goo , 0.018-solution , 0.009-ipad , 0.009-quiz , 0.009-omd , 0.009-sfapp , 0.009-bank</td></tr> <tr><td>Topic17</td><td>17 0.057-dlvr , 0.052-_ , 0.052-thewatcher , 0.051-volcanopic , 0.038-http , 0.037-status , 0.036-twitter , 0.032-eruption , 0.031-com , 0.031-volcano</td></tr> <tr><td>Topic18</td><td>18 0.110-permanent , 0.110-kilometer , 0.110-allow , 0.055-hghulamfatima , 0.055-huokk , 0.055-izj , 0.055-dangerzone , 0.054-increase , 0.006-work , 0.006-pleasure</td></tr> <tr><td>Topic19</td><td>19 0.155-phivolcs , 0.067-zone , 0.047-already , 0.028-km , 0.020-week , 0.020-possible , 0.018-level , 0.018-high , 0.018-could , 0.018-reliefweb</td></tr></tbody>
+                </table>
+              </div>
+              <div class="col-md-6">
+                <h3>Non-negative Matrix Factorization(NMF) Topics</h3>
+                <table class="table table-hover table-bordered">
+                  <thead>
+                    <th>Topic No.</th>
+                    <th>Words</th>
+                  </thead>
+                  <tbody><tr><td>Topic0</td><td>brgy, zuma, girionnet, gila, gesetzt, geology, generate, gemma, gefahrliche, gdnpfpnewsworld, gl, gbxl, fuxdly, fury, fur, fuelgtmioe, fuego, frequent, girl, gmanetwork</td></tr><tr><td>Topic1</td><td>albay, people, bicol, sunday, pakitang, nag, gila, mayonvolcano, philippin, gemma, tandarora, ongjoco, ann, order, barangay, preventive, guinobatan, mayor, maninila, pic</td></tr><tr><td>Topic2</td><td>january, int, irinnew, flash, ocha, reliefweb, report, update, legaspi, jaimessincioco, post, paulo, joey, sarte, salceda, zkm, manallos, pifdfr, evacuate, city</td></tr><tr><td>Topic3</td><td>charge, zuma, gbxl, gila, gesetzt, geology, generate, gemma, gefahrliche, gdnpfpnewsworld, fuxdly, girl, fury, fur, fuelgtmioe, fuego, frequent, fref, girionnet, gl</td></tr><tr><td>Topic4</td><td>mayon, eruption, volcano, due, time, dlvr, thewatcher, show, sign, mayonvolcano, imminent, phivolcs, volcan, philippin, http, kadovar, major, much, nothing, meantime</td></tr><tr><td>Topic5</td><td>affect, family, almost, one, gmanew, even, volcanohotspot, status, eruption, twitter, https, com, mayon, carry, lunareclipse, total, super, perigee, pronounce, merit</td></tr><tr><td>Topic6</td><td>com, https, twitter, status, eruption, rooonaneo, http, lhiwogit, volcano, pic, dlvr, thewatcher, mayonvolcano, rizal, jump, resident, philippin, tendency, evacuate, mean</td></tr><tr><td>Topic7</td><td>camalig, instagram, beraxulhmpq, explode, eacayan, see, www, heavy, daraga, experience, lpaidvds, fall, part, volcano, nature, raymondmaximo, science, ash, com, eruption</td></tr><tr><td>Topic8</td><td>february, eruptionchaser, forget, semi, today, inflation, continuous, sustained, go, real, faster, time, bulletin, not, do, gov, late, come, report, continue</td></tr><tr><td>Topic9</td><td>phillipine, increase, tendency, mean, resident, ningitochibika, heirigogakumi, eruption, cnnphilippine, html, permanent, kilometer, allow, update, phivolcs, news, stay, dangerzone, izj, huokk</td></tr><tr><td>Topic10</td><td>luzon, beautiful, phivolcs_dost, eruption, official, youtube, rpzz, pkv, watch, follow, pyroclastic, www, flow, update, plume, observe, com, https, planetdiary, tcet</td></tr><tr><td>Topic11</td><td>lava, fountain, flow, observe, pyroclastic, volcanodiscover, http, newskali, eruption, pyroclastique, et, tonight, avalanche, ecoulement, morning, pyroclasticflow, miisi, qbmhnf, bonga, vqy</td></tr><tr><td>Topic12</td><td>huge, plume, smoke, ash, send, philippin, watch, pkv, rpzz, official, youtube, active, follow, pyroclastic, www, update, flow, abscbnnew, cloud, volcanohttps</td></tr><tr><td>Topic13</td><td>progress, evacuation, due, time, eruption, tandarora, order, guinobatan, maninila, ongjoco, barangay, gemma, preventive, mayor, ann, xtrenz, erupt, flee, nqfhh, aksyontv</td></tr><tr><td>Topic14</td><td>feb, date, visibility, ashfall, heavy, cone, perfectly, form, lpaidvds, daraga, experience, part, fall, raymondmaximo, nature, science, ash, mayonvolcano, volcano, philippine</td></tr><tr><td>Topic15</td><td>displace, woman, dignity, refo, unfpaph, help, ensure, girl, safety, bit, http, devacu, millier, gbxl, mother, kit, pregnant, unfpa, reach, dlvr</td></tr><tr><td>Topic16</td><td>volcan, plus, actifs, philippine, ete, vous, environ, dan, leruption, ayeemacaraig, du, heureux, touriste, afpfr, mayon, rtsvideo, alor, semble, hoajd, dzlfsd</td></tr><tr><td>Topic17</td><td>send, eruption, philippine, beautiful, phivolcs_dost, actifs, plus, mayonvolcano, curtisschin, dlvr, volcano, ash, due, pm, time, qcqlcb, sign, show, thewatcher, imminent</td></tr><tr><td>Topic18</td><td>active, country, volcano, philippin, smoke, ash, dlvr, thewatcher, sign, show, http, eruption, imminent, qcqlcb, phivolcs, kadovar, kusatsushirane, qcszkb, qfjxfx, sinabung</td></tr><tr><td>Topic19</td><td>province, albay, north, eastern, locate, philippine, youtu, xnljsug, ilonggonatunay, plus, actifs, purplechick, kjsxs, plq_g, evening, ahjlv, apple, evh, standard, cover</td></tr>  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div role="tabpanel" class="tab-pane" id="Visual">
+            <div class="container-fluid">
+              <div class="col-md-6">
+                <h3>Latent Dirichlet Allocation(LDA) Visualization</h3>
+                <embed src="LDA_Visualization.html" height="700px" width="1000px"></embed>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript" src="HTMLFiles/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="HTMLFiles/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+    </script>
+</body>
+</html>

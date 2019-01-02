@@ -89,15 +89,27 @@ tpcmdl_entry_2.insert(END, num)
 
 
 def genertp(name):
-    def donothing():
-        print("Do nothing")
+    def viewresults(window):
+        print('ok')
+        window.destroy()
+        new=2
+        webbrowser.open('viewresults.html',new=new)
     def topicmdling(name):
         window1status_label.config(text = 'Cleaning') 
         cleaned = t2.cleaning(name)
         window1status_label.config(text = 'Creating Corpus')
         corpus = t2.mkcorpus(cleaned)
-        window1status_label.config(text = 'Training')
-        t2.mallda(corpus,cleaned)
+        window1status_label.config(text = 'LDA Training')
+        outres1 = t2.ldamdl(corpus,cleaned)
+        fl1 = open("ldaresult.res","w")
+        fl1.write("".join(outres1))
+        fl1.close()
+        window1status_label.config(text = 'NMF Training')
+        outres2 =t2.nmfmdl(cleaned)
+        fl2 = open("nmfresult.res","w")
+        fl2.writelines("".join(outres2))
+        fl2.close()
+        genresults()    
     def process_queue(self):
         try:
             msg = self.queue.get(0)
@@ -123,7 +135,7 @@ def genertp(name):
     window1.minsize(280,100)
     window1.maxsize(280,100)
     window1status_label = Label(window1, text = "Processing",pady=10, font= "Times 11")
-    viewresults_button = Button(window1, text ="View Results", font ="Times 11", borderwidth=3, command=lambda: donothing)
+    viewresults_button = Button(window1, text ="View Results", font ="Times 11", borderwidth=3, command=lambda: viewresults(window1))
     tpcbar_progressbar = Progressbar(window1, orient=HORIZONTAL,length=100,  mode='indeterminate')
     
     window1status_label.pack()
@@ -173,5 +185,32 @@ def dataclct(query,num,startd,endd):
     window2.Queue = Queue.Queue()
     ThreadedTask(window2.Queue).start()
     window1.main.after(100,window2.process_queue)
-       
+
+def genresults():
+    resultpg = open('viewresults.html','w')
+    
+    fpart = open('HTMLFiles/firstpart.html','r')
+    fpartr = fpart.read()
+    
+    resultpg.write(fpartr)
+    fpart.close
+
+    usmdls.ldaout(resultpg)
+
+    mpart = open('HTMLFiles/midpart.html','r')
+    mpartr = mpart.read()
+
+    resultpg.write(mpartr)
+    mpart.close
+
+    usmdls.nmfout(resultpg)
+
+    lpart = open('HTMLFiles/lastpart.html','r')
+    lpartr = lpart.read()
+    
+    resultpg.write(lpartr)
+    lpart.close
+
+    resultpg.close()
+
 main.mainloop()

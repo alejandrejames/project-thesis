@@ -117,7 +117,9 @@ def ldamdl(corpus,data_lemmatized):
                                                    alpha='auto',
                                                    per_word_topics=True)
     pprint(lda_model.print_topics())
+    data = lda_model.print_topics()
     doc_lda = lda_model[corpus]
+    return str(data)
     vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
     pyLDAvis.save_html(vis, 'LDA_Visualization.html')
     
@@ -126,11 +128,11 @@ def mallda(corpus,data_lemmatized):
     id2word = corpora.Dictionary(data_lemmatized)
     mallet_path = "C:/Users/Asus/Documents/project-thesis/mallet-2.0.8/bin/mallet"
     ldamallet = gensim.models.wrappers.LdaMallet(mallet_path, corpus=corpus, num_topics=20, id2word=id2word)
-    print(ldamallet.show_topics(formatted=True))
+    pprint(ldamallet.show_topics(formatted=False))
     data = ldamallet.show_topics(formatted=False)
     #vis = pyLDAvis.gensim.prepare(ldamallet, corpus, id2word)
     #pyLDAvis.save_html(vis, 'LDA_Visualization.html')
-    return data
+    return str(data)
     
 def nmfmdl(data):
     num_topics = 20
@@ -148,7 +150,6 @@ def nmfmdl(data):
     
         #the word ids obtained need to be reverse-mapped to the words so we can print the topic names.
         feat_names = vectorizer.get_feature_names()
-    
         word_dict = {};
         for i in range(num_topics):
             print("Working on\n")
@@ -158,6 +159,24 @@ def nmfmdl(data):
             word_dict['Topic # ' + '{:02d}'.format(i+1)] = words;
             print(word_dict['Topic # ' + '{:02d}'.format(i+1)])
         return pd.DataFrame(word_dict);
+    
+    def fileout(model, n_top_words):
+    
+        #the word ids obtained need to be reverse-mapped to the words so we can print the topic names.
+        feat_names = vectorizer.get_feature_names()
 
-    dict = get_nmf_topics(model, 20)
+        nmfval = ""
+        word_dict = {};
+        for i in range(num_topics):
+            print("Working on\n")
+            #for each topic, obtain the largest values, and add the words they map to into the dictionary.
+            words_ids = model.components_[i].argsort()[:-20 - 1:-1]
+            words = [feat_names[key] for key in words_ids]
+            word_dict['Topic # ' + '{:02d}'.format(i+1)] = words;
+            nmfval = nmfval + str(word_dict['Topic # ' + '{:02d}'.format(i+1)])
+            print(word_dict['Topic # ' + '{:02d}'.format(i+1)])
+        return nmfval;
+
+    dict = fileout(model, 20)
     print(dict)
+    return str(dict)
