@@ -146,10 +146,14 @@ def genertp(name):
     window1.main.after(100,window1.process_queue)
     
 def dataclct(query,num,startd,endd):
-    def donothing():
-        print("Do nothing")
+    def opendir(window):
+        dir_path = os.path.dirname(os.path.realpath(__file__))# open current directory
+        subprocess.check_call(['explorer', dir_path])
+        window.destroy()
+    def openfl():
+        os.system("start EXCEL.EXE output_got.csv")
     def collection(query,num,startd,endd):
-        window2status_label.config(text = 'Cleaning') 
+        window2status_label.config(text = 'Collecting...') 
         usmdls.collectdata(query,num,startd,endd)
     def process_queue(self):
         try:
@@ -168,15 +172,17 @@ def dataclct(query,num,startd,endd):
             clctbar_progressbar.stop()
             clctbar_progressbar.destroy()
             window2status_label.config(text = 'Completed')
+            openfile_button.pack()
             viewresults2_button.pack()
             self.queue.put("Task finished")
             
     window2 = tk.Toplevel(main)
-    window2.title('Generating...')
+    window2.title('Collection Status')
     window2.minsize(280,100)
     window2.maxsize(280,100)
     window2status_label = Label(window2, text = "Processing",pady=10, font= "Times 11")
-    viewresults2_button = Button(window2, text ="View Results", font ="Times 11", borderwidth=3, command=lambda: donothing)
+    viewresults2_button = Button(window2, text ="View Results", font ="Times 11", borderwidth=3, command=lambda: opendir())
+    openfile_button = Button(window2, text ="Open File", font ="Times 11", borderwidth=3, command=lambda: openfl())
     clctbar_progressbar = Progressbar(window2, orient=HORIZONTAL,length=100,  mode='indeterminate')
     
     window2status_label.pack()

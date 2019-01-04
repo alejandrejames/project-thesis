@@ -119,9 +119,9 @@ def ldamdl(corpus,data_lemmatized):
     pprint(lda_model.print_topics())
     data = lda_model.print_topics()
     doc_lda = lda_model[corpus]
-    return str(data)
     vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
     pyLDAvis.save_html(vis, 'LDA_Visualization.html')
+    return str(data)
     
 def mallda(corpus,data_lemmatized):
     print("Traning..")
