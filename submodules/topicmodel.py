@@ -26,7 +26,10 @@ import webbrowser
 stop_words = stopwords.words('english')
 stop_words.extend(['from', 'subject', 're', 'edu', 'use','com','http','https','www'])
 
-def cleaning(csvname):
+def cleaning(csvname,email,links,specchars,bitricnt,bithresh,trithresh,stpwrds):
+    print(int(bitricnt))
+    print(int(bithresh))
+    print(int(trithresh))
     print("Cleaning...")
     ##Input file
     data = pd.read_csv(csvname, 
@@ -39,10 +42,13 @@ def cleaning(csvname):
 
     ##Cleaning
     # Remove Emails
-    data = [re.sub('\S*@\S*\s?', '', sent) for sent in data]
-
-    # Remove new line characters
-    data = [re.sub('\s+', ' ', sent) for sent in data]
+    if(email == 1):
+        print('email')
+        data = [re.sub('\S*@\S*\s?', '', sent) for sent in data]
+    if(links == 1):
+        print('link')
+        # Remove new line characters
+        data = [re.sub('\s+', ' ', sent) for sent in data]
 
     # Remove distracting single quotes
     data = [re.sub("\'", "", sent) for sent in data]
@@ -50,11 +56,12 @@ def cleaning(csvname):
     def sent_to_words(sentences):
         for sentence in sentences:
             yield(gensim.utils.simple_preprocess(str(sentence), deacc=True))  # deacc=True removes punctuations
+    if(specchars == 1):
+        print('chars')
+        data_words = list(sent_to_words(data))
 
-    data_words = list(sent_to_words(data))
-
-    bigram = gensim.models.Phrases(data_words, min_count=5, threshold=100) # higher threshold fewer phrases.
-    trigram = gensim.models.Phrases(bigram[data_words], threshold=100)  
+    bigram = gensim.models.Phrases(data_words, min_count=int(bitricnt), threshold=int(bithresh)) # higher threshold fewer phrases.
+    trigram = gensim.models.Phrases(bigram[data_words], threshold=int(trithresh))  
 
     # Faster way to get a sentence clubbed as a trigram/bigram
     bigram_mod = gensim.models.phrases.Phraser(bigram)
@@ -76,10 +83,11 @@ def cleaning(csvname):
             doc = nlp(" ".join(sent)) 
             texts_out.append([token.lemma_ for token in doc if token.pos_ in allowed_postags])
         return texts_out
-
-    # Remove Stop Words
-    data_words_nostops = remove_stopwords(data_words)
-
+    if(stpwrds == 1):
+        print('words')
+        # Remove Stop Words
+        data_words_nostops = remove_stopwords(data_words)
+        
     # Form Bigrams
     data_words_bigrams = make_bigrams(data_words_nostops)
 
@@ -104,20 +112,20 @@ def mkcorpus(data_lemmatized):
     ##
     return corpus
 
-def ldamdl(corpus,data_lemmatized):
+def ldamdl(corpus,data_lemmatized,numtopics,randomstate,update,chunksize,tpasses):
     id2word = corpora.Dictionary(data_lemmatized)
-
+    print(data_lemmatized,numtopics,randomstate,update,chunksize,tpasses)
     lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
                                                    id2word=id2word,
-                                                   num_topics=20, 
-                                                   random_state=100,
-                                                   update_every=1,
-                                                   chunksize=100,
-                                                   passes=10,
+                                                   num_topics=numtopics, 
+                                                   random_state=randomstate,
+                                                   update_every=update,
+                                                   chunksize=chunksize,
+                                                   passes=tpasses,
                                                    alpha='auto',
                                                    per_word_topics=True)
-    pprint(lda_model.print_topics())
-    data = lda_model.print_topics()
+    pprint(lda_model.print_topics(numtopics,15))
+    data = lda_model.print_topics(numtopics,15)
     doc_lda = lda_model[corpus]
     vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
     pyLDAvis.save_html(vis, 'LDA_Visualization.html')
@@ -134,14 +142,14 @@ def mallda(corpus,data_lemmatized):
     #pyLDAvis.save_html(vis, 'LDA_Visualization.html')
     return str(data)
     
-def nmfmdl(data):
-    num_topics = 20
+def nmfmdl(data,numtopics,mfeatures,nomaxis):
+    num_topics = numtopics
     train_headlines_sentences = [' '.join(text) for text in data]
-    vectorizer = CountVectorizer(analyzer='word', max_features=5000);
+    vectorizer = CountVectorizer(analyzer='word', max_features=mfeatures);
     x_counts = vectorizer.fit_transform(train_headlines_sentences);
     transformer = TfidfTransformer(smooth_idf=False);
     x_tfidf = transformer.fit_transform(x_counts);
-    xtfidf_norm = normalize(x_tfidf, norm='l1', axis=1)
+    xtfidf_norm = normalize(x_tfidf, norm='l1', axis=nomaxis)
     #obtain a NMF model.
     model = NMF(n_components=num_topics, init='nndsvd');
     #fit the model
@@ -177,6 +185,6 @@ def nmfmdl(data):
             print(word_dict['Topic # ' + '{:02d}'.format(i+1)])
         return nmfval;
 
-    dict = fileout(model, 20)
+    dict = fileout(model, num_topics)
     print(dict)
     return str(dict)

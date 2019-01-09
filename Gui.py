@@ -11,8 +11,8 @@ from tkinter.ttk import Progressbar
 import threading
 import time
 import queue as Queue
-
-
+import pickle
+import datetime
 
 
 main = Tk()
@@ -67,6 +67,8 @@ collect_entry_2.grid(row=1, column=1)
 collect_entry_3.grid(row=4, column=1)
 collect_entry_4.grid(row=5, column=1)
 collect_entry_5.grid(row=6, column=1)
+now = datetime.datetime.now()
+collect_entry_5.insert(END,'collecteddata-'+str(now.strftime("%Y-%m-%d")))
 
 collect_entry_1_ttp = ttp.CreateToolTip(collect_entry_1, "Query keyword found in tweets")
 collect_entry_2_ttp = ttp.CreateToolTip(collect_entry_2, "Max number of tweets to be gathered")
@@ -81,23 +83,34 @@ dpp_label_1 = Label(page3, text="Data Pre-processing:", font = "Times 15", pady=
 dpp_label_2 = Label(page3, text="CSV Filename:", font = "Times 15", pady=20)
 dpp_label_3 = Label(page3, text="Remove:", font = "Times 15")
 dpp_label_4 = Label(page3, text="Bigrams and Trigrams", font = "Times 15",pady=10)
-dpp_label_5 = Label(page3, text="Count:", font = "Times 14")
+dpp_label_5 = Label(page3, text="Min. Count:", font = "Times 14")
 dpp_label_6 = Label(page3, text="Bigram Threshold:", font = "Times 14")
 dpp_label_7 = Label(page3, text="Trigram Threshold:", font = "Times 14")
 
-dpp_checkbox_1 = Checkbutton(page3, text = "Emails", font = "Times 15")
-dpp_checkbox_2 = Checkbutton(page3, text = "Special characters(ex:@#!$%^)", font = "Times 15")
-dpp_checkbox_3 = Checkbutton(page3, text = "Links", font = "Times 15")
-dpp_checkbox_4 = Checkbutton(page3, text = "Remove Stopwords", font = "Times 14")
+emailvar = IntVar()
+dpp_checkbox_1 = Checkbutton(page3, text = "Emails", font = "Times 15", variable=emailvar)
+dpp_checkbox_1.select()
+speccharvar = IntVar()
+dpp_checkbox_2 = Checkbutton(page3, text = "Special characters(ex:@#!$%^)", font = "Times 15", variable=speccharvar)
+dpp_checkbox_2.select()
+linkvar = IntVar()
+dpp_checkbox_3 = Checkbutton(page3, text = "Links", font = "Times 15", variable=linkvar)
+dpp_checkbox_3.select()
+stpwrdvar = IntVar()
+dpp_checkbox_4 = Checkbutton(page3, text = "Remove Stopwords", font = "Times 14", variable=stpwrdvar)
+dpp_checkbox_4.select()
 
 dpp_entry_1 = Entry(page3, width ="35")
 dpp_entry_2 = Entry(page3)
+dpp_entry_2.insert(END, '5')
 dpp_entry_3 = Entry(page3)
+dpp_entry_3.insert(END, '100')
 dpp_entry_4 = Entry(page3)
+dpp_entry_4.insert(END, '100')
 
 dpp_button_1 = Button(page3, text ="General Stopwords", font ="Times 15", borderwidth=3, relief ="solid")
 dpp_button_2 = Button(page3, text ="Additional Stopwords", font ="Times 15", borderwidth=3, relief ="solid")
-dpp_button_3 = Button(page3, text ="Clean Data  File", font ="Times 15", borderwidth=3, relief ="solid", padx=30)
+dpp_button_3 = Button(page3, text ="Clean Data  File", font ="Times 15", borderwidth=3, relief ="solid", padx=30, command=lambda: datacleaning(main,dpp_entry_1.get()))
 
 dpp_label_1.grid(row=0, sticky=W)
 dpp_label_2.grid(row=1, sticky=W)
@@ -138,6 +151,7 @@ tpcmdl_button = Button(page2, text ="Browse", font ="Times 15", borderwidth=3, r
 tpcmdl_button1 = Button(page2, text ="Generate Topic Keywords", font ="Times 15", borderwidth=3, relief="solid", command=lambda: genertp(tpcmdl_entry_1.get()))
 tpcmdl_label_3 = Label(page2, text = "Filename:",pady=10, font= "Times 15")
 tpcmdl_entry_1 = Entry(page2, width ="35")
+tpcmdl_entry_1.insert(END,'cleaneddata.cds')
 tpcmdl_entry_2 = Entry(page2, width ="20")
 
 tpcmdl_label_4 = Label(page2, text = "LDA Parameters",pady=10, font= "Times 15")
@@ -221,17 +235,19 @@ def genertp(name):
         new=2
         webbrowser.open('viewresults.html',new=new)
     def topicmdling(name):
-        window1status_label.config(text = 'Cleaning') 
-        cleaned = t2.cleaning(name)
+        with open(name, 'rb') as filehandle:
+            cleaned = pickle.load(filehandle) 
+        print(cleaned)
         window1status_label.config(text = 'Creating Corpus')
         corpus = t2.mkcorpus(cleaned)
         window1status_label.config(text = 'LDA Training')
-        outres1 = t2.ldamdl(corpus,cleaned)
+        print(int(ldaparam_entry_1.get()))
+        outres1 = t2.ldamdl(corpus,cleaned,int(ldaparam_entry_1.get()) ,int(ldaparam_entry_2.get()) ,int(ldaparam_entry_3.get()) ,int(ldaparam_entry_4.get()) ,int(ldaparam_entry_5.get()))
         fl1 = open("ldaresult.res","w")
         fl1.write("".join(outres1))
         fl1.close()
         window1status_label.config(text = 'NMF Training')
-        outres2 =t2.nmfmdl(cleaned)
+        outres2 =t2.nmfmdl(cleaned,int(nmfparam_entry_1.get()) ,int(nmfparam_entry_2.get()) ,int(nmfparam_entry_4.get()))
         fl2 = open("nmfresult.res","w")
         fl2.writelines("".join(outres2))
         fl2.close()
@@ -280,7 +296,7 @@ def dataclct(query,num,startd,endd):
         os.system("start EXCEL.EXE output_got.csv")
     def collection(query,num,startd,endd):
         window2status_label.config(text = 'Collecting...') 
-        usmdls.collectdata(query,num,startd,endd)
+        usmdls.collectdata(query,num,startd,endd,collect_entry_5.get())
     def process_queue(self):
         try:
             msg = self.queue.get(0)
@@ -344,5 +360,47 @@ def genresults():
     lpart.close
 
     resultpg.close()
+def datacleaning(main,name):
+    def cleaningdata(name):
+        window1status_label.config(text = 'Cleaning')
+        cleaned = t2.cleaning(name,emailvar.get(),linkvar.get(),speccharvar.get(),dpp_entry_2.get(),dpp_entry_3.get(),dpp_entry_4.get(),stpwrdvar.get())
+        print(cleaned)
+        with open("cleaneddata.cds","wb") as filehandle:
+            pickle.dump(cleaned,filehandle)
+         #   for listitem in cleaned:
+          #      filehandle.write('%s\n' % listitem)
+    def process_queue(self):
+        try:
+            msg = self.queue.get(0)
+            # Show result of the task if needed
+            self.prog_bar.stop()
+        except Queue.Empty:
+            self.master.after(100, self.process_queue)
 
+    class ThreadedTask(threading.Thread):
+        def __init__(self, queue):
+            threading.Thread.__init__(self)
+            self.queue = queue
+        def run(self):
+            cleaningdata(name)  # Simulate long running process
+            tpcbar_progressbar.stop()
+            tpcbar_progressbar.destroy()
+            window1status_label.config(text = 'Completed')
+            viewresults_button.pack()
+            self.queue.put("Task finished")
+
+    window1 = tk.Toplevel(main)
+    window1.title('Pre-processing')
+    window1.minsize(280,100)
+    window1.maxsize(280,100)
+    window1status_label = Label(window1, text = "Processing",pady=10, font= "Times 11")
+    viewresults_button = Button(window1, text ="Close", font ="Times 11", borderwidth=3, command=lambda: window1.destroy())
+    tpcbar_progressbar = Progressbar(window1, orient=HORIZONTAL,length=100,  mode='indeterminate')
+
+    window1status_label.pack()
+    tpcbar_progressbar.pack()
+    tpcbar_progressbar.start()
+    window1.Queue = Queue.Queue()
+    ThreadedTask(window1.Queue).start()
+    window1.main.after(100,window1.process_queue)
 main.mainloop()

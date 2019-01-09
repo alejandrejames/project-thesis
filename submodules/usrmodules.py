@@ -1,10 +1,10 @@
 import subprocess
 import os
 
-def collectdata(query,num,startd,endd):
+def collectdata(query,num,startd,endd,flname):
     collect = 'python Exporter.py --querysearch "'
     collect = collect + query
-    collect = collect + '" --since '+startd+' --until '+endd+' --maxtweets '+num
+    collect = collect + '" --since '+startd+' --until '+endd+' --maxtweets '+num+' --output '+flname+'.csv'
     print(collect)
     subprocess.call(collect, shell=True)
 
