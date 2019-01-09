@@ -24,7 +24,7 @@ from nltk.corpus import stopwords
 import webbrowser
 
 stop_words = stopwords.words('english')
-stop_words.extend(['from', 'subject', 're', 'edu', 'use'])
+stop_words.extend(['from', 'subject', 're', 'edu', 'use','com','http','https','www'])
 
 def cleaning(csvname):
     print("Cleaning...")
