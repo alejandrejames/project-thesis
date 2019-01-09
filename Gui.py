@@ -1,5 +1,6 @@
 from submodules import topicmodel as t2
 from submodules import usrmodules as usmdls
+from submodules import tooltip as ttp
 import os
 import subprocess
 import webbrowser
@@ -67,6 +68,12 @@ collect_entry_3.grid(row=4, column=1)
 collect_entry_4.grid(row=5, column=1)
 collect_entry_5.grid(row=6, column=1)
 
+collect_entry_1_ttp = ttp.CreateToolTip(collect_entry_1, "Query keyword found in tweets")
+collect_entry_2_ttp = ttp.CreateToolTip(collect_entry_2, "Max number of tweets to be gathered")
+collect_entry_3_ttp = ttp.CreateToolTip(collect_entry_3, "Start date of collecting")
+collect_entry_4_ttp = ttp.CreateToolTip(collect_entry_4, "End date of collecting")
+collect_entry_5_ttp = ttp.CreateToolTip(collect_entry_5, "filename of the csv file")
+
 
 page3 =  ttk.Frame(nb)
 nb.add(page3, text ='Data Pre-proccessing')
@@ -77,14 +84,17 @@ dpp_label_4 = Label(page3, text="Bigrams and Trigrams", font = "Times 15",pady=1
 dpp_label_5 = Label(page3, text="Count:", font = "Times 14")
 dpp_label_6 = Label(page3, text="Bigram Threshold:", font = "Times 14")
 dpp_label_7 = Label(page3, text="Trigram Threshold:", font = "Times 14")
+
 dpp_checkbox_1 = Checkbutton(page3, text = "Emails", font = "Times 15")
 dpp_checkbox_2 = Checkbutton(page3, text = "Special characters(ex:@#!$%^)", font = "Times 15")
 dpp_checkbox_3 = Checkbutton(page3, text = "Links", font = "Times 15")
 dpp_checkbox_4 = Checkbutton(page3, text = "Remove Stopwords", font = "Times 14")
+
 dpp_entry_1 = Entry(page3, width ="35")
 dpp_entry_2 = Entry(page3)
 dpp_entry_3 = Entry(page3)
 dpp_entry_4 = Entry(page3)
+
 dpp_button_1 = Button(page3, text ="General Stopwords", font ="Times 15", borderwidth=3, relief ="solid")
 dpp_button_2 = Button(page3, text ="Additional Stopwords", font ="Times 15", borderwidth=3, relief ="solid")
 dpp_button_3 = Button(page3, text ="Clean Data  File", font ="Times 15", borderwidth=3, relief ="solid", padx=30)
@@ -101,10 +111,21 @@ dpp_checkbox_2.grid(row=3,column=1)
 dpp_checkbox_3.grid(row=4,column=0)
 dpp_checkbox_4.grid(row=9,column=0)
 
+dpp_checkbox_1_ttp = ttp.CreateToolTip(dpp_checkbox_1, "@")
+dpp_checkbox_2_ttp = ttp.CreateToolTip(dpp_checkbox_2, "https,www,http")
+dpp_checkbox_3_ttp = ttp.CreateToolTip(dpp_checkbox_3, "!@#$#%")
+dpp_checkbox_4_ttp = ttp.CreateToolTip(dpp_checkbox_4, "blank")
+
+
 dpp_entry_1.grid(row=1, column=1)
 dpp_entry_2.grid(row=6, column=1)
 dpp_entry_3.grid(row=7, column=1)
 dpp_entry_4.grid(row=8, column=1)
+
+dpp_entry_1_ttp = ttp.CreateToolTip(dpp_entry_1, "Filename of the csv file to be  cleaned")
+dpp_entry_2_ttp = ttp.CreateToolTip(dpp_entry_2, "blank")
+dpp_entry_3_ttp = ttp.CreateToolTip(dpp_entry_3, "blank")
+dpp_entry_4_ttp = ttp.CreateToolTip(dpp_entry_4, "blank")
 dpp_button_1.grid(row=10, column=0)
 dpp_button_2.grid(row=10, column=1)
 dpp_button_3.grid(pady =5 ,row=12,columnspan=3)
@@ -148,6 +169,22 @@ nmfparam_entry_3.insert(END,int(11))
 nmfparam_label_4 = Label(page2, text = "TIDF Normalizer Axis",pady=3, font= "Times 12")
 nmfparam_entry_4 = Entry(page2, width ="5")
 nmfparam_entry_4.insert(END,int(1))
+
+tpcmdl_entry_1_ttp = ttp.CreateToolTip(tpcmdl_entry_1, "blank")
+ldaparam_entry_1_ttp = ttp.CreateToolTip(ldaparam_entry_1, "blank")
+ldaparam_entry_2_ttp = ttp.CreateToolTip(ldaparam_entry_2, "blank")
+ldaparam_entry_3_ttp = ttp.CreateToolTip(ldaparam_entry_3, "blank")
+ldaparam_entry_4_ttp = ttp.CreateToolTip(ldaparam_entry_4, "blank")
+ldaparam_entry_5_ttp = ttp.CreateToolTip(ldaparam_entry_5, "blank")
+nmfparam_entry_1_ttp = ttp.CreateToolTip(nmfparam_entry_1, "blank")
+nmfparam_entry_2_ttp = ttp.CreateToolTip(nmfparam_entry_2, "blank")
+nmfparam_entry_3_ttp = ttp.CreateToolTip(nmfparam_entry_3, "blank")
+nmfparam_entry_4_ttp = ttp.CreateToolTip(nmfparam_entry_4, "blank")
+
+
+
+
+
 
 tpcmdl_label_1.grid(row=0, sticky=W)
 #tpcmdl_button.grid(row=1, sticky=E)
