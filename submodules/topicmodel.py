@@ -24,7 +24,9 @@ from nltk.corpus import stopwords
 import webbrowser
 
 stop_words = stopwords.words('english')
-stop_words.extend(['from', 'subject', 're', 'edu', 'use','com','http','https','www'])
+with open('additional_stop_words.asw', 'rb') as filehandle:
+    stpwrds_extension = pickle.load(filehandle)
+stop_words.extend(stpwrds_extension)
 
 def cleaning(csvname,email,links,specchars,bitricnt,bithresh,trithresh,stpwrds):
     print(int(bitricnt))
@@ -112,7 +114,7 @@ def mkcorpus(data_lemmatized):
     ##
     return corpus
 
-def ldamdl(corpus,data_lemmatized,numtopics,randomstate,update,chunksize,tpasses):
+def ldamdl(corpus,data_lemmatized,numtopics,randomstate,update,chunksize,tpasses,wrdpt):
     id2word = corpora.Dictionary(data_lemmatized)
     print(data_lemmatized,numtopics,randomstate,update,chunksize,tpasses)
     lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
@@ -124,8 +126,8 @@ def ldamdl(corpus,data_lemmatized,numtopics,randomstate,update,chunksize,tpasses
                                                    passes=tpasses,
                                                    alpha='auto',
                                                    per_word_topics=True)
-    pprint(lda_model.print_topics(numtopics,15))
-    data = lda_model.print_topics(numtopics,15)
+    pprint(lda_model.print_topics(numtopics,wrdpt))
+    data = lda_model.print_topics(numtopics,wrdpt)
     doc_lda = lda_model[corpus]
     vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
     pyLDAvis.save_html(vis, 'LDA_Visualization.html')
@@ -142,14 +144,14 @@ def mallda(corpus,data_lemmatized):
     #pyLDAvis.save_html(vis, 'LDA_Visualization.html')
     return str(data)
     
-def nmfmdl(data,numtopics,mfeatures,nomaxis):
+def nmfmdl(data,numtopics,mfeatures,mindf,maxdf):
     num_topics = numtopics
     train_headlines_sentences = [' '.join(text) for text in data]
-    vectorizer = CountVectorizer(analyzer='word', max_features=mfeatures);
+    vectorizer = CountVectorizer(analyzer='word', max_features=mfeatures,min_df=mindf,max_df=maxdf);
     x_counts = vectorizer.fit_transform(train_headlines_sentences);
     transformer = TfidfTransformer(smooth_idf=False);
     x_tfidf = transformer.fit_transform(x_counts);
-    xtfidf_norm = normalize(x_tfidf, norm='l1', axis=nomaxis)
+    xtfidf_norm = normalize(x_tfidf, norm='l1', axis=1)
     #obtain a NMF model.
     model = NMF(n_components=num_topics, init='nndsvd');
     #fit the model
