@@ -13,7 +13,8 @@ import time
 import queue as Queue
 import pickle
 import datetime
-
+import warnings
+warnings.filterwarnings(action="ignore",category=UserWarning,module='gensim')
 
 main = Tk()
 main.title('Topic Analysis on Mayon Volcano Tweet')
@@ -241,13 +242,12 @@ def genertp(name):
         new=2
         webbrowser.open('viewresults.html',new=new)
     def topicmdling(name):
+        window1status_label.config(text = 'Reading file contents')
         with open(name, 'rb') as filehandle:
             cleaned = pickle.load(filehandle) 
-        print(cleaned)
         window1status_label.config(text = 'Creating Corpus')
         corpus = t2.mkcorpus(cleaned)
         window1status_label.config(text = 'LDA Training')
-        print(int(ldaparam_entry_1.get()))
         outres1 = t2.ldamdl(corpus,cleaned,int(ldaparam_entry_1.get()) ,int(ldaparam_entry_2.get()) ,int(ldaparam_entry_3.get()) ,int(ldaparam_entry_4.get()) ,int(ldaparam_entry_5.get()) ,int(ldaparam_entry_6.get()))
         fl1 = open("ldaresult.res","w")
         fl1.write("".join(outres1))
@@ -338,7 +338,7 @@ def dataclct(query,num,startd,endd):
     clctbar_progressbar.start()
     window2.Queue = Queue.Queue()
     ThreadedTask(window2.Queue).start()
-    window1.main.after(100,window2.process_queue)
+    window2.main.after(100,window2.process_queue)
 
 def genresults():
     resultpg = open('viewresults.html','w')
@@ -370,11 +370,8 @@ def datacleaning(main,name):
     def cleaningdata(name):
         window1status_label.config(text = 'Cleaning')
         cleaned = t2.cleaning(name,emailvar.get(),linkvar.get(),speccharvar.get(),dpp_entry_2.get(),dpp_entry_3.get(),dpp_entry_4.get(),stpwrdvar.get())
-        print(cleaned)
         with open("cleaneddata.cds","wb") as filehandle:
-            pickle.dump(cleaned,filehandle)
-         #   for listitem in cleaned:
-          #      filehandle.write('%s\n' % listitem)
+            pickle.dump(cleaned,filehandle,protocol=pickle.HIGHEST_PROTOCOL)
     def process_queue(self):
         try:
             msg = self.queue.get(0)
@@ -395,7 +392,7 @@ def datacleaning(main,name):
             viewresults_button.pack()
             self.queue.put("Task finished")
 
-    window1 = tk.Toplevel(main)
+    window1 = tk.Toplevel()
     window1.title('Pre-processing')
     window1.minsize(280,100)
     window1.maxsize(280,100)
@@ -408,7 +405,7 @@ def datacleaning(main,name):
     tpcbar_progressbar.start()
     window1.Queue = Queue.Queue()
     ThreadedTask(window1.Queue).start()
-    window1.main.after(100,window1.process_queue)
+    window1.after(100,process_queue(window1))
 
 def viewstopwrds(main,stats):
     window = tk.Toplevel(main)
@@ -428,20 +425,17 @@ def viewstopwrds(main,stats):
         gtspwrds_label_1.pack()
         gtspwrds_entry_1.pack()
     else:
-        def updatestpwrds(stpwrds_extension):
-            with open("additional_stop_words.asw","wb") as filehandle:
-                pickle.dump(stpwrds_extension,filehandle)
+        def updatestpwrds(stpwrds_extension):    
+            with open("additional_stop_words.asw","w") as filehandle:
+                filehandle.write(stpwrds_extension)
             gtspwrds_label_2 = Label(window, text = "Updated Stopwords",pady=10, font= "Times 12")
             gtspwrds_label_2.pack()
         window.title('Additional Stopwords')
         window.minsize(450,450)
         window.maxsize(450,450)
 
-        from nltk.corpus import stopwords
-        stop_words = stopwords.words('english')
-        with open('additional_stop_words.asw', 'rb') as filehandle:
-            stpwrds_extension = pickle.load(filehandle)
-        stop_words.extend(stpwrds_extension)
+        with open('additional_stop_words.asw', 'r') as filehandle:
+            stpwrds_extension = filehandle.readline()
         
         gtspwrds_label_1 = Label(window, text = "Add,Remove,Edit Stopwords",pady=10, font= "Times 15")
         gtspwrds_entry_1 = Text(window, width=50, height=22,wrap='word')

@@ -24,9 +24,24 @@ from nltk.corpus import stopwords
 import webbrowser
 
 stop_words = stopwords.words('english')
-with open('additional_stop_words.asw', 'rb') as filehandle:
-    stpwrds_extension = pickle.load(filehandle)
+with open('additional_stop_words.asw', 'r') as filehandle:
+    stpwrds_extension = []
+    string1 = filehandle.read().rstrip('\n')
+    stpwrds_extension = string1.split(',')
 stop_words.extend(stpwrds_extension)
+with open('additional_stop_words_tagalog.asw', 'r') as filehandle:
+    stpwrds_extension2 = []
+    string1 = filehandle.read().rstrip('\n')
+    stpwrds_extension2 = string1.split(',')
+    print(stpwrds_extension2)
+stop_words.extend(stpwrds_extension2)
+with open('additional_stop_words_mallet.asw', 'r') as filehandle:
+    stpwrds_extension3 = []
+    string1 = filehandle.read().rstrip('\n')
+    stpwrds_extension3 = string1.split(',')
+    print(stpwrds_extension3)
+stop_words.extend(stpwrds_extension3)
+print(stop_words)
 
 def cleaning(csvname,email,links,specchars,bitricnt,bithresh,trithresh,stpwrds):
     print(int(bitricnt))
@@ -46,7 +61,7 @@ def cleaning(csvname,email,links,specchars,bitricnt,bithresh,trithresh,stpwrds):
     # Remove Emails
     if(email == 1):
         print('email')
-        data = [re.sub('\S*@\S*\s?', '', sent) for sent in data]
+        data = [re.sub('\S*@\S*\s?\_\S_\S.\s.', '', sent) for sent in data]
     if(links == 1):
         print('link')
         # Remove new line characters
@@ -85,6 +100,9 @@ def cleaning(csvname,email,links,specchars,bitricnt,bithresh,trithresh,stpwrds):
             doc = nlp(" ".join(sent)) 
             texts_out.append([token.lemma_ for token in doc if token.pos_ in allowed_postags])
         return texts_out
+    with open('clean1.txt', 'w') as filehandle:
+        line = ' '.join(str(x) for x in data_words)
+        filehandle.write(str((line + '\n').encode("utf-8")))
     if(stpwrds == 1):
         print('words')
         # Remove Stop Words
@@ -92,13 +110,20 @@ def cleaning(csvname,email,links,specchars,bitricnt,bithresh,trithresh,stpwrds):
         
     # Form Bigrams
     data_words_bigrams = make_bigrams(data_words_nostops)
+    with open('clean2.txt', 'w') as filehandle:
+        line = ' '.join(str(x) for x in data_words_bigrams)
+        filehandle.write(str((line + '\n').encode("utf-8")))
 
     nlp = spacy.load('en_core_web_sm')
-
     # Do lemmatization keeping only noun, adj, vb, adv
     data_lemmatized = lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
     ##
-    return data_lemmatized
+    
+    data_lemmatized2 = remove_stopwords(data_lemmatized)
+    with open('clean3.txt', 'w') as filehandle:
+        line = ' '.join(str(x) for x in data_lemmatized2)
+        filehandle.write(str((line + '\n').encode("utf-8")))
+    return data_lemmatized2
 
 def mkcorpus(data_lemmatized):
     print("Creating corpus")
@@ -126,7 +151,7 @@ def ldamdl(corpus,data_lemmatized,numtopics,randomstate,update,chunksize,tpasses
                                                    passes=tpasses,
                                                    alpha='auto',
                                                    per_word_topics=True)
-    pprint(lda_model.print_topics(numtopics,wrdpt))
+    #pprint(lda_model.print_topics(numtopics,wrdpt))
     data = lda_model.print_topics(numtopics,wrdpt)
     doc_lda = lda_model[corpus]
     vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
@@ -184,9 +209,15 @@ def nmfmdl(data,numtopics,mfeatures,mindf,maxdf):
             words = [feat_names[key] for key in words_ids]
             word_dict['Topic # ' + '{:02d}'.format(i+1)] = words;
             nmfval = nmfval + str(word_dict['Topic # ' + '{:02d}'.format(i+1)])
-            print(word_dict['Topic # ' + '{:02d}'.format(i+1)])
+            #print(word_dict['Topic # ' + '{:02d}'.format(i+1)])
         return nmfval;
-
+    dict2 = get_nmf_topics(model, num_topics)
     dict = fileout(model, num_topics)
-    print(dict)
+    #print(dict2)
+    #with open('nmf1', 'w') as filehandle:
+        #filehandle.write(str(dict2))
+    #with open('nmf2', 'w') as filehandle:
+        #filehandle.write(str(dict))
+    #print('-------------------------------------------------------')
+    #print(dict)
     return str(dict)
