@@ -5,6 +5,7 @@ import sklearn;
 import sys;
 from nltk.corpus import stopwords;
 import nltk;
+import gensim
 from gensim.models import ldamodel
 import gensim.corpora as corpora
 from gensim.utils import simple_preprocess
@@ -22,32 +23,33 @@ import pyLDAvis.gensim  # don't skip this
 import matplotlib.pyplot as plt
 from nltk.corpus import stopwords
 import webbrowser
+from time import sleep
+import matplotlib.pyplot as plt
+import random
+from wordcloud import WordCloud, STOPWORDS
+import tkinter as tk
 
-stop_words = stopwords.words('english')
-with open('additional_stop_words.asw', 'r') as filehandle:
-    stpwrds_extension = []
-    string1 = filehandle.read().rstrip('\n')
-    stpwrds_extension = string1.split(',')
-stop_words.extend(stpwrds_extension)
-with open('additional_stop_words_tagalog.asw', 'r') as filehandle:
-    stpwrds_extension2 = []
-    string1 = filehandle.read().rstrip('\n')
-    stpwrds_extension2 = string1.split(',')
-    print(stpwrds_extension2)
-stop_words.extend(stpwrds_extension2)
-with open('additional_stop_words_mallet.asw', 'r') as filehandle:
-    stpwrds_extension3 = []
-    string1 = filehandle.read().rstrip('\n')
-    stpwrds_extension3 = string1.split(',')
-    print(stpwrds_extension3)
-stop_words.extend(stpwrds_extension3)
-print(stop_words)
 
-def cleaning(csvname,email,links,specchars,bitricnt,bithresh,trithresh,stpwrds):
-    print(int(bitricnt))
-    print(int(bithresh))
-    print(int(trithresh))
-    print("Cleaning...")
+def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
+    from nltk.corpus import stopwords
+    stop_words = stopwords.words('english')
+    with open('additional_stop_words.asw', 'r') as filehandle:
+        stpwrds_extension = []
+        string1 = filehandle.read().rstrip('\n')
+        stpwrds_extension = string1.split(',')
+        stop_words.extend(stpwrds_extension)
+    with open('additional_stop_words_tagalog.asw', 'r') as filehandle:
+        stpwrds_extension2 = []
+        string1 = filehandle.read().rstrip('\n')
+        stpwrds_extension2 = string1.split(',')
+    stop_words.extend(stpwrds_extension2)
+    with open('additional_stop_words_mallet.asw', 'r') as filehandle:
+        stpwrds_extension3 = []
+        string1 = filehandle.read().rstrip('\n')
+        stpwrds_extension3 = string1.split(',')
+        stop_words.extend(stpwrds_extension3)
+    dpp_entry_4.insert(tk.END,'Stopwords Loaded\n')
+    dpp_entry_4.insert(tk.END,'Cleaning...\n')
     ##Input file
     data = pd.read_csv(csvname, 
     error_bad_lines=False)
@@ -60,25 +62,30 @@ def cleaning(csvname,email,links,specchars,bitricnt,bithresh,trithresh,stpwrds):
     ##Cleaning
     # Remove Emails
     if(email == 1):
-        print('email')
+        dpp_entry_4.insert(tk.END,'Removing emails...')
         data = [re.sub('\S*@\S*\s?\_\S_\S.\s.', '', sent) for sent in data]
+        data = [re.sub(r'[^\x00-\x7f]',r'', sent) for sent in data]
+        data = [re.sub('@[^\s]+','',sent) for sent in data]
+        data = [re.sub(r"http\S+", "", sent) for sent in data]
+    dpp_entry_4.insert(tk.END,'Success\n')
+    
     if(links == 1):
-        print('link')
+        dpp_entry_4.insert(tk.END,'Removing Links...')
         # Remove new line characters
         data = [re.sub('\s+', ' ', sent) for sent in data]
-
     # Remove distracting single quotes
     data = [re.sub("\'", "", sent) for sent in data]
-
+    dpp_entry_4.insert(tk.END,'Sucess\n')
     def sent_to_words(sentences):
         for sentence in sentences:
             yield(gensim.utils.simple_preprocess(str(sentence), deacc=True))  # deacc=True removes punctuations
     if(specchars == 1):
-        print('chars')
+        dpp_entry_4.insert(tk.END,'Removing Special Characters...')
         data_words = list(sent_to_words(data))
-
-    bigram = gensim.models.Phrases(data_words, min_count=int(bitricnt), threshold=int(bithresh)) # higher threshold fewer phrases.
-    trigram = gensim.models.Phrases(bigram[data_words], threshold=int(trithresh))  
+    dpp_entry_4.insert(tk.END,'Success\n')
+    
+    bigram = gensim.models.Phrases(data_words, min_count=5, threshold=100) # higher threshold fewer phrases.
+    trigram = gensim.models.Phrases(bigram[data_words], threshold=100)  
 
     # Faster way to get a sentence clubbed as a trigram/bigram
     bigram_mod = gensim.models.phrases.Phraser(bigram)
@@ -104,10 +111,12 @@ def cleaning(csvname,email,links,specchars,bitricnt,bithresh,trithresh,stpwrds):
         line = ' '.join(str(x) for x in data_words)
         filehandle.write(str((line + '\n').encode("utf-8")))
     if(stpwrds == 1):
-        print('words')
+        dpp_entry_4.insert(tk.END,'Removing Stopwords...')
         # Remove Stop Words
         data_words_nostops = remove_stopwords(data_words)
-        
+    dpp_entry_4.insert(tk.END,'Success\n')
+
+    dpp_entry_4.insert(tk.END,'Finalizing...')
     # Form Bigrams
     data_words_bigrams = make_bigrams(data_words_nostops)
     with open('clean2.txt', 'w') as filehandle:
@@ -123,6 +132,7 @@ def cleaning(csvname,email,links,specchars,bitricnt,bithresh,trithresh,stpwrds):
     with open('clean3.txt', 'w') as filehandle:
         line = ' '.join(str(x) for x in data_lemmatized2)
         filehandle.write(str((line + '\n').encode("utf-8")))
+    dpp_entry_4.insert(tk.END,'Completed\n')
     return data_lemmatized2
 
 def mkcorpus(data_lemmatized):
@@ -139,47 +149,59 @@ def mkcorpus(data_lemmatized):
     ##
     return corpus
 
-def ldamdl(corpus,data_lemmatized,numtopics,randomstate,update,chunksize,tpasses,wrdpt):
+def ldamdl(corpus,data_lemmatized,numtopics,randomstate,update,tpasses,wrdpt):
     id2word = corpora.Dictionary(data_lemmatized)
-    print(data_lemmatized,numtopics,randomstate,update,chunksize,tpasses)
+    #print(data_lemmatized,numtopics,randomstate,update,chunksize,tpasses)
     lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
                                                    id2word=id2word,
                                                    num_topics=numtopics, 
                                                    random_state=randomstate,
-                                                   update_every=update,
-                                                   chunksize=chunksize,
+                                                   update_every=1,
+                                                   chunksize=100,
                                                    passes=tpasses,
                                                    alpha='auto',
-                                                   per_word_topics=True)
+                                                   per_word_topics=True,iterations=update)
     #pprint(lda_model.print_topics(numtopics,wrdpt))
     data = lda_model.print_topics(numtopics,wrdpt)
+    with open('ldamdl.lda', 'wb') as filehandle:
+            pickle.dump(str(data),filehandle,protocol=pickle.HIGHEST_PROTOCOL)
     doc_lda = lda_model[corpus]
+    #for t in range(lda_model.num_topics):
+     #   plt.figure()
+      #  plt.imshow(WordCloud().fit_words(dict(lda_model.show_topic(t, 200))))
+       # plt.axis("off")
+        #plt.title("Topic #" + str(t))
+       # plt.show()
     vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
     pyLDAvis.save_html(vis, 'LDA_Visualization.html')
     return str(data)
     
-def mallda(corpus,data_lemmatized):
+def mallda(corpus,data_lemmatized,numtopics,wpt,iterat):
     print("Traning..")
     id2word = corpora.Dictionary(data_lemmatized)
     mallet_path = "C:/Users/Asus/Documents/project-thesis/mallet-2.0.8/bin/mallet"
-    ldamallet = gensim.models.wrappers.LdaMallet(mallet_path, corpus=corpus, num_topics=20, id2word=id2word)
-    pprint(ldamallet.show_topics(formatted=False))
-    data = ldamallet.show_topics(formatted=False)
-    #vis = pyLDAvis.gensim.prepare(ldamallet, corpus, id2word)
-    #pyLDAvis.save_html(vis, 'LDA_Visualization.html')
+    ldamallet = gensim.models.wrappers.LdaMallet(mallet_path, corpus=corpus, num_topics=numtopics, id2word=id2word,workers=4, prefix=None,optimize_interval=0, iterations=iterat)
+    #pprint(ldamallet.show_topics(formatted=False,num_topics=numtopics, num_words=wpt))
+    data = ldamallet.show_topics(formatted=True,num_topics=numtopics, num_words=wpt)
+    print('-------------------------------------------------------------------')
+    #print(str(data))
+    lda_model = gensim.models.wrappers.ldamallet.malletmodel2ldamodel(ldamallet)
+    vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
+    pyLDAvis.save_html(vis, 'LDA_Visualization.html')
     return str(data)
     
-def nmfmdl(data,numtopics,mfeatures,mindf,maxdf):
+def nmfmdl(data,numtopics,mfeatures,wpt,iterat,rstate):
     num_topics = numtopics
     train_headlines_sentences = [' '.join(text) for text in data]
-    vectorizer = CountVectorizer(analyzer='word', max_features=mfeatures,min_df=mindf,max_df=maxdf);
+    vectorizer = CountVectorizer(analyzer='word', max_features=mfeatures);
     x_counts = vectorizer.fit_transform(train_headlines_sentences);
     transformer = TfidfTransformer(smooth_idf=False);
     x_tfidf = transformer.fit_transform(x_counts);
     xtfidf_norm = normalize(x_tfidf, norm='l1', axis=1)
     #obtain a NMF model.
-    model = NMF(n_components=num_topics, init='nndsvd');
+    model = NMF(n_components=num_topics, init='nndsvd',max_iter=iterat,random_state=rstate);
     #fit the model
+    print(model)
     model.fit(xtfidf_norm)
     def get_nmf_topics(model, n_top_words):
     
@@ -189,7 +211,7 @@ def nmfmdl(data,numtopics,mfeatures,mindf,maxdf):
         for i in range(num_topics):
             print("Working on\n")
             #for each topic, obtain the largest values, and add the words they map to into the dictionary.
-            words_ids = model.components_[i].argsort()[:-20 - 1:-1]
+            words_ids = model.components_[i].argsort()[:-n_top_words - 1:-1]
             words = [feat_names[key] for key in words_ids]
             word_dict['Topic # ' + '{:02d}'.format(i+1)] = words;
             print(word_dict['Topic # ' + '{:02d}'.format(i+1)])
@@ -205,19 +227,23 @@ def nmfmdl(data,numtopics,mfeatures,mindf,maxdf):
         for i in range(num_topics):
             print("Working on\n")
             #for each topic, obtain the largest values, and add the words they map to into the dictionary.
-            words_ids = model.components_[i].argsort()[:-20 - 1:-1]
+            words_ids = model.components_[i].argsort()[:-n_top_words - 1:-1]
             words = [feat_names[key] for key in words_ids]
             word_dict['Topic # ' + '{:02d}'.format(i+1)] = words;
             nmfval = nmfval + str(word_dict['Topic # ' + '{:02d}'.format(i+1)])
             #print(word_dict['Topic # ' + '{:02d}'.format(i+1)])
         return nmfval;
-    dict2 = get_nmf_topics(model, num_topics)
-    dict = fileout(model, num_topics)
+    #dict2 = get_nmf_topics(model, 5)
+    dict = fileout(model, wpt)
+    #pprint(dict2)
+    #print(str(dict))
+    with open('nmfmdl.nmf', 'wb') as filehandle:
+            pickle.dump(str(dict),filehandle,protocol=pickle.HIGHEST_PROTOCOL)
     #print(dict2)
     #with open('nmf1', 'w') as filehandle:
         #filehandle.write(str(dict2))
-    #with open('nmf2', 'w') as filehandle:
-        #filehandle.write(str(dict))
+    with open('nmf2', 'w') as filehandle:
+        filehandle.write(str(dict))
     #print('-------------------------------------------------------')
     #print(dict)
     return str(dict)
