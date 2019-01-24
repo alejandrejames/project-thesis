@@ -20,6 +20,7 @@ from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 warnings.filterwarnings(action="ignore",category=UserWarning,module='gensim')
 
 main = Tk()
@@ -186,10 +187,10 @@ tpcmdl_label_3 = Label(page2, text = "Filename:",pady=10, font= "Times 15 bold")
 tpcmdl_entry_1 = Entry(page2, width ="25",bg="grey",fg="white",font = "Times 15 bold")
 tpcmdl_entry_1.insert(END,'cleaneddata.cds')
 tpcmdl_entry_2 = Entry(page2, width ="20",font= "Times 15 bold")
-tpcmdl_entry_4 = Text(page2,width=160,height=8,font = "Times 10")
+tpcmdl_entry_4 = Text(page2,width=160,height=10,font = "Times 10")
 tpcmdl_entry_4.insert(END, 'Ready')
 tpcmdl_entry_4.insert(END, '....\n')
-tpcmdl_entry_4.insert(END, '========================================================================================================================================')
+tpcmdl_entry_4.insert(END, '=========================================================================================================================================')
 tpcmdl_entry_4.config(state=DISABLED)
 tpcmdl_progressbar = Progressbar(page2, orient=HORIZONTAL,length=970,  mode='indeterminate')
 
@@ -199,7 +200,7 @@ ldaparam_entry_1 = Entry(page2,bg="grey",fg="white", width ="6",font= "Times 15 
 ldaparam_entry_1.insert(END,int(10))
 ldaparam_label_2 = Label(page2, text = "Random State:",pady=3, font= "Times 14 bold")
 ldaparam_entry_2 = Entry(page2,bg="grey",fg="white", width ="15",font= "Times 15 bold")
-ldaparam_entry_2.insert(END,int(random.randint(1,101)))
+ldaparam_entry_2.insert(END,int(1000))
 ldaparam_label_3 = Label(page2, text = "Iterations:",pady=3, font= "Times 14 bold")
 ldaparam_entry_3 = Entry(page2,bg="grey",fg="white", width ="15",font= "Times 15 bold")
 ldaparam_entry_3.insert(END,int(500))
@@ -247,8 +248,8 @@ ldaparam_label_3.grid(row=4,sticky=W)
 ldaparam_entry_3.grid(row=4,sticky=W,padx=90)
 ldaparam_label_5.grid(row=5,sticky=W)
 ldaparam_entry_5.grid(row=5,sticky=W,padx=140)
-ldaparam_label_2.grid(row=6,sticky=W)
-ldaparam_entry_2.grid(row=6,sticky=W,padx=140)
+#ldaparam_label_2.grid(row=6,sticky=W)
+#ldaparam_entry_2.grid(row=6,sticky=W,padx=140)
 ldaparam_label_7.grid(row=7,sticky=W)
 ldaparam_opmenu.grid(row=7,sticky=W,padx=120)
 
@@ -261,8 +262,8 @@ nmfparam_label_2.grid(row=4,sticky=W,padx=525)
 nmfparam_entry_2.grid(row=4,sticky=W,padx=745)
 nmfparam_label_4.grid(row=5,sticky=W,padx=525)
 nmfparam_entry_4.grid(row=5,sticky=W,padx=615)
-nmfparam_label_5.grid(row=6,sticky=W,padx=525)
-nmfparam_entry_5.grid(row=6,sticky=W,padx=660)
+#nmfparam_label_5.grid(row=6,sticky=W,padx=525)
+#nmfparam_entry_5.grid(row=6,sticky=W,padx=660)
 
 tpcmdl_button1.grid(row=8,sticky=W,padx=340)
 tpcmdl_entry_4.grid(row=9, sticky=W,pady=8)
@@ -287,21 +288,168 @@ tpcmdl_progressbar.grid(row=10,sticky=W)
 #
 #Generate Topic Models Ver.2
 def genertp2(name):
-    def viewresults(window):
+    def viewpyldavis():
         print('ok')
-        window.destroy()
         new=2
-        webbrowser.open('viewresults.html',new=new)
-    def viewwrcld():
-        with open('ldamdl.lda', 'rb') as filehandle:
+        webbrowser.open('LDA_Visualization.html',new=new)
+    def freqbar(model):
+        if(model=='lda'):
+            usmdls.ldafreqbar()
+        else:
+            usmdls.nmffreqbar()
+    def viewwrcld(model):
+        if(model=='lda'):
+            with open('ldamdl.lda', 'rb') as filehandle:
                 lda_model = pickle.load(filehandle)
-        title = 'model'
-        wordcloud = WordCloud(background_color='white',max_font_size=40, scale=3,random_state=1,width=800,height=400).generate(str(lda_model))
-        fig = plt.figure(1, figsize=(20, 10))
-        plt.axis('off')
-        plt.imshow(wordcloud)
-        plt.savefig('ldawc')
-        plt.show()
+            title = 'Latent Dirichlet Allocation(LDA) WordCloud'
+            wordcloud = WordCloud(background_color='white',max_font_size=40, scale=3,random_state=1,width=800,height=400).generate(str(lda_model))
+            fig = plt.figure(1, figsize=(20, 10))
+            plt.axis('off')
+            plt.imshow(wordcloud)
+            plt.savefig('ldawc')
+            plt.show()
+        else:
+            with open('nmfmdl.nmf', 'rb') as filehandle:
+                lda_model = pickle.load(filehandle)
+            title = 'Non-negative Matrix Factorization(NMF WordCloud'
+            wordcloud = WordCloud(background_color='white',max_font_size=40, scale=3,random_state=1,width=800,height=400).generate(str(lda_model))
+            fig = plt.figure(1, figsize=(20, 10))
+            plt.axis('off')
+            plt.imshow(wordcloud)
+            plt.savefig('ldawc')
+            plt.show()
+    def openresultwindow():
+        window = tk.Toplevel(main)
+        window.title('Topic Analysis on Mayon Volcano Tweet')
+        window.geometry('1300x600')
+        window.maxsize(1300,600)
+        window.minsize(1300,600)
+        
+        result_label_1 = Label(window,text = 'Generated Results')
+        result_label_1.grid(row=0,sticky=W,padx=610)
+        
+        result_button_1 = Button(window,text='Visualize LDA in WordCloud' ,command= lambda:viewwrcld('lda'))
+        result_button_1.grid(row=1,sticky=W,padx=10)
+        result_button_2 = Button(window,text='View LDA Word Frequency in Matplotlib',command= lambda:freqbar('lda'))
+        result_button_2.grid(row=1,sticky=W,padx=180)
+        result_button_3 = Button(window,text='View in pyLDAvis Chart',command= lambda:viewpyldavis())
+        result_button_3.grid(row=2,sticky=W,padx=10,pady=5)
+        
+        result_button_4 = Button(window,text='Visualize NMF in WordCloud',command= lambda:viewwrcld('nmf'))
+        result_button_4.grid(row=1,sticky=W,padx=880)
+        result_button_5 = Button(window,text='View NMF Word Frequency in Matplotlib',command= lambda:freqbar('nmf'))
+        result_button_5.grid(row=1,sticky=W,padx=1055)
+        
+        result_label_2 = Label(window,text = 'LDA Result')
+        result_label_2.grid(row=3,sticky=W,pady=20)
+        
+        result_label_3 = Label(window,text = 'NMF Result')
+        result_label_3.grid(row=3,sticky=W,pady=20,padx=880)
+        
+        result_label_4 = Label(window,text = 'Topic Number')
+        result_label_4.grid(row=4,sticky=W)
+        result_label_5 = Label(window,text = 'Topic Words')
+        result_label_5.grid(row=4,sticky=W,padx=100)
+        result_label_6 = Label(window,text = 'Labels')
+        result_label_6.grid(row=4,sticky=W,padx=450)
+        
+        numrows = 5
+        labelsLDA = []
+        textasLDA = []
+        entriesLDA = []
+        fl3 = open('ldaresult.res','r')
+        conts = fl3.readline()
+        flag=0
+        num = 0
+        for x in conts:
+            if(x=='('):
+                label = Label(window,text='Topic'+str(num))
+                texta = Text(window,height=2,width=40)
+                entry = Entry(window)
+            elif(x==')'):
+                labelsLDA.append(label)
+                textasLDA.append(texta)
+                entriesLDA.append(entry)
+                num = int(num) + 1
+            elif(x=='*'):
+                texta.insert(END,'-')
+            elif(x=='+'):
+                texta.insert(END,',')
+            elif(x==','):
+                q = 0
+            elif(x=='"'):
+                q = 0
+            elif(x=='['):
+                q = 0
+            elif(x==']'):
+                q = 0
+            elif(x=="'"):
+                q = 0
+            else:
+                texta.insert(END,x)
+        fl3.close()
+        count = 0
+        for m in labelsLDA:
+            m.grid(row=numrows+count,sticky=W)
+            count =count + 1
+        
+        count = 0
+        for m in textasLDA:
+            m.grid(row=numrows+count,sticky=W,padx=100)
+            count =count + 1
+        
+        count = 0
+        for m in entriesLDA:
+            m.grid(row=numrows+count,sticky=W,padx=450)
+            count =count + 1
+
+        #NMF
+        numrows = 5
+        labelsNMF = []
+        textasNMF = []
+        entriesNMF = []
+        fl = open('nmfresult.res','r')
+        conts = fl.readline()
+        flag=0
+        num = 0
+        topicsg = []
+        topicwrd = []
+        for x in conts:
+            if(x=='['):
+                label = Label(window,text='Topic'+str(num))
+                texta = Text(window,height=2,width=40)
+                entry = Entry(window)
+            elif(x==']'):
+                labelsNMF.append(label)
+                textasNMF.append(texta)
+                entriesNMF.append(entry)
+                num = int(num) + 1
+            elif(x=="'"):
+                q = 0
+                charstr = ''.join(topicwrd)
+                #print(charstr)
+                topicsg.append(charstr)
+                topicwrd = [] 
+            else:
+                texta.insert(END,x)
+                topicwrd.append(x)
+        fl.close()
+            
+        count = 0
+        for m in labelsNMF:
+            m.grid(row=numrows+count,sticky=W,padx=750)
+            count =count + 1
+        
+        count = 0
+        for m in textasNMF:
+            m.grid(row=numrows+count,sticky=W,padx=825)
+            count =count + 1
+        
+        count = 0
+        for m in entriesNMF:
+            m.grid(row=numrows+count,sticky=W,padx=1160)
+            count =count + 1
+        
     def topicmdling(name):
         tpcmdl_entry_4.insert(END,'Reading file contents...')
         with open(name, 'rb') as filehandle:
@@ -340,12 +488,7 @@ def genertp2(name):
             tpcmdl_entry_4.insert(END,'Completed')
             tpcmdl_entry_4.config(state='disabled')
             tpcmdl_progressbar.stop()
-            window = tk.Toplevel(main)
-            window.title('Generating...')
-            window.minsize(280,100)
-            window.maxsize(280,100)
-            button1 = Button(window,text ="Collect Data",fg="white", font ="Times 15 bold", bg ="green",borderwidth=3, relief ="raised", command=lambda: viewwrcld())
-            button1.pack()
+            openresultwindow()
             
     tpcmdl_entry_4.config(state='normal')
     text = "Parameters:\n"
@@ -387,16 +530,40 @@ def dataclct2(query,num,startd,endd):
             text = "Completed\n"
             collect_entry_6.insert(END,text)
             collect_entry_6.config(state='disabled')
+            
             window = tk.Toplevel(main)
             window.title('Completed')
-            window.minsize(280,100)
-            window.maxsize(280,100)
-            windowstatus_label = Label(window, text = "Completed",pady=10, font= "Times 11")
+            window.minsize(1200,500)
+            window.maxsize(1200,500)
+            windowstatus_label = Label(window, text = "Collected Tweets",pady=10, font= "Times 11")
             viewresults2_button = Button(window, text ="Open in Explorer", font ="Times 11", borderwidth=3, command=lambda: opendir(window2))
             openfile_button = Button(window, text ="Open File", font ="Times 11", borderwidth=3, command=lambda: openfl())
-            windowstatus_label.pack()
-            viewresults2_button.pack()
-            openfile_button.pack()
+            windowlabel_1 = Label(window,text='Twittter Data')
+            
+            windowstatus_label.grid(row=0,sticky=W)
+            viewresults2_button.grid(row=1,sticky=W)
+            openfile_button.grid(row=2,sticky=W)
+            windowlabel_1.grid(row=3,sticky=W)
+            scrollbar = Scrollbar(window)
+            text1 = Text(window,width=145,height=21,yscrollcommand = scrollbar.set)
+            text1.grid(row=4,sticky=W,padx=10,pady=5)
+            scrollbar.grid(row=4,sticky=W,ipady=150,padx=1178)
+            scrollbar.config(command = text1.yview)
+            
+            data = pd.read_csv('orginaldata.csv', 
+            error_bad_lines=False)
+            # We only need the Headlines text column from the data
+            data_text = data[['data']]
+            data_text = data_text.astype('str');
+            data = data_text.data.values.tolist()
+            numb=0
+            for x in data:
+                if(x!='nan'):
+                    textstr = 'Tweet No. '+str(num)+' - '+data[numb]+'\n\n'
+                    text1.insert(END,textstr)
+                numb = numb + 1
+            
+            
             entrywrd = collect_entry_5.get()+".csv"
             dpp_entry_1.delete(0, tk.END)
             dpp_entry_1.insert(0, entrywrd)

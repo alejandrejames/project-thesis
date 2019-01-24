@@ -150,12 +150,12 @@ def mkcorpus(data_lemmatized):
     return corpus
 
 def ldamdl(corpus,data_lemmatized,numtopics,randomstate,update,tpasses,wrdpt):
+    print('Numtopics:',numtopics,'Random_state:',randomstate,'Iterations',update,'tpasses:',tpasses,'wrdpt:',wrdpt)
     id2word = corpora.Dictionary(data_lemmatized)
     #print(data_lemmatized,numtopics,randomstate,update,chunksize,tpasses)
     lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
                                                    id2word=id2word,
-                                                   num_topics=numtopics, 
-                                                   random_state=randomstate,
+                                                   num_topics=numtopics,
                                                    update_every=1,
                                                    chunksize=100,
                                                    passes=tpasses,
@@ -199,7 +199,7 @@ def nmfmdl(data,numtopics,mfeatures,wpt,iterat,rstate):
     x_tfidf = transformer.fit_transform(x_counts);
     xtfidf_norm = normalize(x_tfidf, norm='l1', axis=1)
     #obtain a NMF model.
-    model = NMF(n_components=num_topics, init='nndsvd',max_iter=iterat,random_state=rstate);
+    model = NMF(n_components=num_topics, init='nndsvd',max_iter=iterat);
     #fit the model
     print(model)
     model.fit(xtfidf_norm)

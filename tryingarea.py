@@ -30,7 +30,7 @@ from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
 import matplotlib.pyplot as plt
-with open('ldamdl.lda', 'rb') as filehandle:
+with open('nmfmdl.nmf', 'rb') as filehandle:
      lda_model = pickle.load(filehandle)
 #print(lda_model)
 num = 0
@@ -49,7 +49,7 @@ thelist = []
 for x in lda_model:
      if(x == '+'):
           thelist.append(stringfrm)
-          print(stringfrm)
+          #print(stringfrm)
           stringfrm = ""
      elif(x == '\''):
           continue
@@ -108,5 +108,5 @@ plt.show()
 
 plt.imshow(wordcloud)
 plt.savefig('ldawc')
-plt.show()
+#plt.show()
 
