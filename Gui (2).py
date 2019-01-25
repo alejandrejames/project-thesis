@@ -131,13 +131,15 @@ dpp_entry_1 = Entry(dpp_frame_1,width="25",bg="blue",fg="white",font = "Times 15
 dpp_entry_1.insert(END, 'orginaldata.csv')
 dpp_entry_2 = Entry(dpp_frame_1,width="25",bg="blue",fg="white",font = "Times 15 bold")
 dpp_entry_2.insert(END, 'cleaneddata')
-dpp_entry_3 = Text(page3,width=75,height=15,font = "Times 10")
+dpp_scrollbar = Scrollbar(page3)
+dpp_entry_3 = Text(page3,width=75,height=15,font = "Times 10",yscrollcommand = dpp_scrollbar.set)
 dpp_entry_4 = Text(page3,width=159,height=5,font = "Times 10")
 dpp_entry_4.insert(END, 'Ready')
 dpp_entry_4.insert(END, '....\n')
 dpp_entry_4.insert(END, '========================================================================================================================================')
 dpp_entry_4.config(state=DISABLED)
 cleaning_progressbar = Progressbar(page3, orient=HORIZONTAL,length=970,  mode='indeterminate')
+dpp_scrollbar.config(command = dpp_entry_3.yview)
 
 dpp_button_1 = Button(page3, text ="Default Stopwords",fg="white", font ="Times 12 bold", borderwidth=2, relief ="raised",bg ="blue", command=lambda: viewstopwrds(main,1))
 dpp_button_2 = Button(page3, text ="User Defined Stopwords",fg="white", font ="Times 12 bold", borderwidth=2, relief ="raised",bg ="blue", command=lambda: viewstopwrds(main,2))
@@ -163,7 +165,8 @@ dpp_label_6.grid(row=1,sticky=W,padx=500)
 dpp_button_1.grid(row=2,sticky=W,padx=500)
 dpp_button_2.grid(row=2,sticky=W,padx=640)
 dpp_button_4.grid(row=2,sticky=W,padx=820)
-dpp_entry_3.grid(row=3,sticky=W,padx=500)
+dpp_entry_3.grid(row=3,sticky=W,padx=490)
+dpp_scrollbar.grid(row=3,sticky=W,padx=950,ipady=100)
 
 dpp_entry_4.grid(row=5, sticky=W)
 cleaning_progressbar.grid(row=6,sticky=W)
@@ -311,12 +314,12 @@ def genertp2(name):
         else:
             with open('nmfmdl.nmf', 'rb') as filehandle:
                 lda_model = pickle.load(filehandle)
-            title = 'Non-negative Matrix Factorization(NMF WordCloud'
+            title = 'Non-negative Matrix Factorization(NMF) WordCloud'
             wordcloud = WordCloud(background_color='white',max_font_size=40, scale=3,random_state=1,width=800,height=400).generate(str(lda_model))
             fig = plt.figure(1, figsize=(20, 10))
             plt.axis('off')
             plt.imshow(wordcloud)
-            plt.savefig('ldawc')
+            plt.savefig('nmfwc')
             plt.show()
     def openresultwindow():
         window = tk.Toplevel(main)
@@ -324,6 +327,7 @@ def genertp2(name):
         window.geometry('1300x600')
         window.maxsize(1300,600)
         window.minsize(1300,600)
+        
         
         result_label_1 = Label(window,text = 'Generated Results')
         result_label_1.grid(row=0,sticky=W,padx=610)
@@ -358,6 +362,7 @@ def genertp2(name):
         textasLDA = []
         entriesLDA = []
         fl3 = open('ldaresult.res','r')
+        hitwrd = open('hitwordsLDA.txt','a')
         conts = fl3.readline()
         flag=0
         num = 0
@@ -371,10 +376,12 @@ def genertp2(name):
                 textasLDA.append(texta)
                 entriesLDA.append(entry)
                 num = int(num) + 1
+                hitwrd.write('[]')
             elif(x=='*'):
                 texta.insert(END,'-')
             elif(x=='+'):
                 texta.insert(END,',')
+                hitwrd.write(',')
             elif(x==','):
                 q = 0
             elif(x=='"'):
@@ -387,6 +394,12 @@ def genertp2(name):
                 q = 0
             else:
                 texta.insert(END,x)
+                if(x=='0' or x=='1' or x=='2' or x=='3' or x=='4' or x=='5' or x=='6' or x=='7' or x=='8' or x=='9'):
+                    continue
+                else:
+                    hitwrd.write(x)
+        hitwrd.write('-')
+        hitwrd.close()
         fl3.close()
         count = 0
         for m in labelsLDA:
@@ -409,6 +422,7 @@ def genertp2(name):
         textasNMF = []
         entriesNMF = []
         fl = open('nmfresult.res','r')
+        hitwrd = open('hitwordsNMF.txt','a')
         conts = fl.readline()
         flag=0
         num = 0
@@ -424,6 +438,7 @@ def genertp2(name):
                 textasNMF.append(texta)
                 entriesNMF.append(entry)
                 num = int(num) + 1
+                hitwrd.write('[]')
             elif(x=="'"):
                 q = 0
                 charstr = ''.join(topicwrd)
@@ -433,6 +448,9 @@ def genertp2(name):
             else:
                 texta.insert(END,x)
                 topicwrd.append(x)
+                hitwrd.write(x)
+        hitwrd.write('-')
+        hitwrd.close()
         fl.close()
             
         count = 0
@@ -455,29 +473,36 @@ def genertp2(name):
         with open(name, 'rb') as filehandle:
             cleaned = pickle.load(filehandle)
         tpcmdl_entry_4.insert(END,'Success\n')
+        tpcmdl_entry_4.see(tk.END)
         corpus = t2.mkcorpus(cleaned)
         if(ldaparam_opmenu_variable.get()=='Gensim'):
             tpcmdl_entry_4.insert(END,'LDA Training...')
+            tpcmdl_entry_4.see(END)
             outres1 = t2.ldamdl(corpus,cleaned,int(ldaparam_entry_1.get()) ,int(ldaparam_entry_2.get()) ,int(ldaparam_entry_3.get()) ,int(ldaparam_entry_5.get()) ,int(ldaparam_entry_6.get()))
         else:
             print('Gensim')
             tpcmdl_entry_4.insert(END,'LDA Training...')
+            tpcmdl_entry_4.see(tk.END)
             outres1 = t2.mallda(corpus,cleaned,int(ldaparam_entry_1.get()),int(ldaparam_entry_6.get()),int(ldaparam_entry_3.get()))
         fl1 = open("ldaresult.res","w")
         fl1.write("".join(outres1))
         fl1.close()
         tpcmdl_entry_4.insert(END,'Success\n')
+        tpcmdl_entry_4.see(tk.END)
         
         tpcmdl_entry_4.insert(END,'NMF Training...')
+        tpcmdl_entry_4.see(tk.END)
         outres2 =t2.nmfmdl(cleaned,int(nmfparam_entry_1.get()) ,int(nmfparam_entry_2.get()),int(nmfparam_entry_3.get()) ,int(nmfparam_entry_4.get()),int(nmfparam_entry_5.get()))
         fl2 = open("nmfresult.res","w")
         fl2.writelines("".join(outres2))
         fl2.close()
         tpcmdl_entry_4.insert(END,'Success\n')
-
+        tpcmdl_entry_4.see(tk.END)
         tpcmdl_entry_4.insert(END,'Generating Results...')
+        tpcmdl_entry_4.see(tk.END)
         genresults()
         tpcmdl_entry_4.insert(END,'Success\n')
+        tpcmdl_entry_4.see(tk.END)
 
     class ThreadedTask(threading.Thread):
         def __init__(self, queue):
@@ -486,11 +511,13 @@ def genertp2(name):
         def run(self):
             topicmdling(name)  # Simulate long running process
             tpcmdl_entry_4.insert(END,'Completed')
+            tpcmdl_entry_4.see(tk.END)
             tpcmdl_entry_4.config(state='disabled')
             tpcmdl_progressbar.stop()
             openresultwindow()
             
     tpcmdl_entry_4.config(state='normal')
+    tpcmdl_entry_4.see(tk.END)
     text = "Parameters:\n"
     tpcmdl_entry_4.insert(END,text)
     text = "LDA: Number of topics="+ldaparam_entry_1.get()+", Word Per Topic="+ldaparam_entry_6.get()+", Iterations="+ldaparam_entry_3.get()+", Training Passes="+ldaparam_entry_5.get()+", Random State="+ldaparam_entry_2.get()+", LDA Model="+ldaparam_opmenu_variable.get()+"\n"
@@ -559,7 +586,7 @@ def dataclct2(query,num,startd,endd):
             numb=0
             for x in data:
                 if(x!='nan'):
-                    textstr = 'Tweet No. '+str(num)+' - '+data[numb]+'\n\n'
+                    textstr = 'Tweet No. '+str(numb)+' - '+data[numb]+'\n\n'
                     text1.insert(END,textstr)
                 numb = numb + 1
             
@@ -570,10 +597,13 @@ def dataclct2(query,num,startd,endd):
             
     collect_entry_6.config(state='normal')
     text = "Parameters: Searchquery="+query+" ,Max No. of Tweets="+num+" ,From="+startd+" ,Until="+endd+"\n"
+    collect_entry_6.see(tk.END)
     collect_entry_6.insert(END,text)
-
+    collect_entry_6.see(tk.END)
     text = "Collecting....\n"
+    collect_entry_6.see(tk.END)
     collect_entry_6.insert(END,text)
+    collect_entry_6.see(tk.END)
     ThreadedTask(collect_entry_6).start()
 #########################################################################################################
 #
@@ -624,16 +654,20 @@ def datacleaning2(main,name):
             cleaningdata(name)# Simulate long running process
             cleaning_progressbar.stop()
             dpp_entry_4.insert(END,'Completed')
+            dpp_entry_4.see(tk.END)
             dpp_entry_4.config(state='disabled')
             window = tk.Toplevel(main)
             window.title('Cleaning Results')
             window.minsize(1000,500)
             window.maxsize(1000,500)
             window_label = Label(window, text = "Cleaned Data Set",pady=10, font= "Times 11")
-            window_entry = Text(window,width=162,height=15,font = "Times 10")
+            window_scrollbar_1 = Scrollbar(window)
+            window_entry = Text(window,width=160,height=15,font = "Times 10",yscrollcommand=window_scrollbar_1.set)
+            window_scrollbar_1.config(command=window_entry.yview)
             window_label_2 = Label(window, text = "Removed Words",pady=10, font= "Times 11")
-            window_entry_2 = Text(window,width=162,height=7,font = "Times 10")
-
+            window_scrollbar_2 = Scrollbar(window)
+            window_entry_2 = Text(window,width=160,height=7,font = "Times 10",yscrollcommand=window_scrollbar_2.set)
+            window_scrollbar_2.config(command=window_entry_2.yview)
             window_button = Button(window, text ="Open in notepad", font ="Times 11", borderwidth=3, command=lambda: openfl(window))
             window_button_2 = Button(window, text ="Close", font ="Times 11", borderwidth=3, command=lambda: window.destroy())
             
@@ -641,8 +675,10 @@ def datacleaning2(main,name):
             window_button.grid(row=0,sticky=W,padx=750)
             window_button_2.grid(row=0,sticky=W,padx=880)
             window_entry.grid(row=1,sticky=W,padx=10)
+            window_scrollbar_1.grid(row=1,sticky=W,padx=975,ipady=90)
             window_label_2.grid(row=2,sticky=W)
             window_entry_2.grid(row=3,sticky=W,padx=10)
+            window_scrollbar_2.grid(row=3,sticky=W,padx=975,ipady=40)
             
             
             with open("cleaneddata.cds","rb") as filehandle:
@@ -685,6 +721,7 @@ def datacleaning2(main,name):
     else:
         text = text+" Remove Stopwords=No\n"
     dpp_entry_4.insert(END,text)
+    dpp_entry_4.see(tk.END)
     ThreadedTask(dpp_entry_4).start()
 ############################################################################
 #
@@ -696,18 +733,21 @@ def viewstopwrds(main,stats):
                 filehandle.write(stpwrds_extension)
             dpp_entry_4.config(state='normal')
             dpp_entry_4.insert(END,'Stopwords Updated\n')
+            dpp_entry_4.see(tk.END)
             dpp_entry_4.config(state='disabled')
         elif(stats==2):
             with open("additional_stop_words.asw","w") as filehandle:
                 filehandle.write(stpwrds_extension)
             dpp_entry_4.config(state='normal')
             dpp_entry_4.insert(END,'Stopwords Updated\n')
+            dpp_entry_4.see(tk.END)
             dpp_entry_4.config(state='disabled')
         else:
             with open("additional_stop_words_mallet.asw","w") as filehandle:
                 filehandle.write(stpwrds_extension)
             dpp_entry_4.config(state='normal')
             dpp_entry_4.insert(END,'Stopwords Updated\n')
+            dpp_entry_4.see(tk.END)
             dpp_entry_4.config(state='disabled')
         
         dpp_button_5.grid_remove()

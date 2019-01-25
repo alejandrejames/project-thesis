@@ -49,7 +49,9 @@ def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
         stpwrds_extension3 = string1.split(',')
         stop_words.extend(stpwrds_extension3)
     dpp_entry_4.insert(tk.END,'Stopwords Loaded\n')
+    dpp_entry_4.see(tk.END)
     dpp_entry_4.insert(tk.END,'Cleaning...\n')
+    dpp_entry_4.see(tk.END)
     ##Input file
     data = pd.read_csv(csvname, 
     error_bad_lines=False)
@@ -63,6 +65,7 @@ def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
     # Remove Emails
     if(email == 1):
         dpp_entry_4.insert(tk.END,'Removing emails...')
+        dpp_entry_4.see(tk.END)
         data = [re.sub('\S*@\S*\s?\_\S_\S.\s.', '', sent) for sent in data]
         data = [re.sub(r'[^\x00-\x7f]',r'', sent) for sent in data]
         data = [re.sub('@[^\s]+','',sent) for sent in data]
@@ -71,6 +74,7 @@ def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
     
     if(links == 1):
         dpp_entry_4.insert(tk.END,'Removing Links...')
+        dpp_entry_4.see(tk.END)
         # Remove new line characters
         data = [re.sub('\s+', ' ', sent) for sent in data]
     # Remove distracting single quotes
@@ -81,8 +85,10 @@ def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
             yield(gensim.utils.simple_preprocess(str(sentence), deacc=True))  # deacc=True removes punctuations
     if(specchars == 1):
         dpp_entry_4.insert(tk.END,'Removing Special Characters...')
+        dpp_entry_4.see(tk.END)
         data_words = list(sent_to_words(data))
     dpp_entry_4.insert(tk.END,'Success\n')
+    dpp_entry_4.see(tk.END)
     
     bigram = gensim.models.Phrases(data_words, min_count=5, threshold=100) # higher threshold fewer phrases.
     trigram = gensim.models.Phrases(bigram[data_words], threshold=100)  
@@ -112,11 +118,14 @@ def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
         filehandle.write(str((line + '\n').encode("utf-8")))
     if(stpwrds == 1):
         dpp_entry_4.insert(tk.END,'Removing Stopwords...')
+        dpp_entry_4.see(tk.END)
         # Remove Stop Words
         data_words_nostops = remove_stopwords(data_words)
     dpp_entry_4.insert(tk.END,'Success\n')
+    dpp_entry_4.see(tk.END)
 
-    dpp_entry_4.insert(tk.END,'Finalizing...')
+    dpp_entry_4.insert(tk.END,'Creating cleaned data set...')
+    dpp_entry_4.see(tk.END)
     # Form Bigrams
     data_words_bigrams = make_bigrams(data_words_nostops)
     with open('clean2.txt', 'w') as filehandle:
@@ -133,6 +142,7 @@ def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
         line = ' '.join(str(x) for x in data_lemmatized2)
         filehandle.write(str((line + '\n').encode("utf-8")))
     dpp_entry_4.insert(tk.END,'Completed\n')
+    dpp_entry_4.see(tk.END)
     return data_lemmatized2
 
 def mkcorpus(data_lemmatized):
