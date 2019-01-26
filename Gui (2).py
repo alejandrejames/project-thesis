@@ -366,6 +366,8 @@ def genertp2(name):
         conts = fl3.readline()
         flag=0
         num = 0
+        topicsg = []
+        topicswrd = []
         for x in conts:
             if(x=='('):
                 label = Label(window,text='Topic'+str(num))
@@ -377,12 +379,19 @@ def genertp2(name):
                 entriesLDA.append(entry)
                 num = int(num) + 1
                 hitwrd.write('[]')
+                entry.insert(END,usmdls.getlbllda(topicsg))
+                topicsg = []
             elif(x=='*'):
                 texta.insert(END,'-')
             elif(x=='+'):
                 texta.insert(END,',')
                 hitwrd.write(',')
+                charstr = ''.join(topicswrd)
+                topicsg.append(charstr)
+                topicswrd = []
             elif(x==','):
+                q = 0
+            elif(x==' '):
                 q = 0
             elif(x=='"'):
                 q = 0
@@ -394,9 +403,10 @@ def genertp2(name):
                 q = 0
             else:
                 texta.insert(END,x)
-                if(x=='0' or x=='1' or x=='2' or x=='3' or x=='4' or x=='5' or x=='6' or x=='7' or x=='8' or x=='9'):
+                if(x=='0' or x=='1' or x=='2' or x=='3' or x=='4' or x=='5' or x=='6' or x=='7' or x=='8' or x=='9' or x=='.'):
                     continue
                 else:
+                    topicswrd.append(x)
                     hitwrd.write(x)
         hitwrd.write('-')
         hitwrd.close()
@@ -439,12 +449,20 @@ def genertp2(name):
                 entriesNMF.append(entry)
                 num = int(num) + 1
                 hitwrd.write('[]')
-            elif(x=="'"):
+                #print(topicsg,'\n\n')
+                entry.insert(END,usmdls.getlblnmf(topicsg))
+                topicsg = []
+            elif(x==","):
                 q = 0
                 charstr = ''.join(topicwrd)
                 #print(charstr)
                 topicsg.append(charstr)
-                topicwrd = [] 
+                topicwrd = []
+                texta.insert(END,',')
+            elif(x=='\''):
+                continue
+            elif(x==' '):
+                continue
             else:
                 texta.insert(END,x)
                 topicwrd.append(x)
