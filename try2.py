@@ -48,7 +48,7 @@ lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
                                                    per_word_topics=True)
 #pprint(lda_model.print_topics(numtopics,wrdpt))
 model = gensim.models.wrappers.LdaMallet('C:/Users/Asus/Documents/project-thesis/mallet-2.0.8/bin/mallet', corpus=corpus, num_topics=10, id2word=id2word,workers=4, prefix=None,optimize_interval=0, iterations=1000)
-print(model.show_topics(formatted=False,num_topics=10, num_words=10))
+#print(model.show_topics(formatted=False,num_topics=10, num_words=10))
 data = lda_model.print_topics(20,10)
 with open('ldamdl.lda', 'wb') as filehandle:
     pickle.dump(str(data),filehandle,protocol=pickle.HIGHEST_PROTOCOL)

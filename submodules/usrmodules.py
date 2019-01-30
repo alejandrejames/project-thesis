@@ -94,16 +94,18 @@ def getlblnmf(topic):
 
     return(tpclabel)
 
-def getlbllda(topic):
+def getlbllda(topic,status):
+    print('gen')
     label1score = 0;label2score = 0;label3score = 0;label4score = 0;label5score = 0;label6score = 0;label7score = 0;label8score = 0;label9score = 0;label0score = 0;
     tpclabel = []
+    labelscores = []
     #print(topic,'\n\n')
     for x in topic:
         if(x=='conduct' or x=='food' or x =='chapter' or x == 'aid' or x=='remain' or x=='expect' or x=='effect' or x =='plan' or x == 'force' or x=='service'):
             label1score = label1score + 1
         if(x=='activity' or x=='today' or x =='detail' or x == 'contact' or x=='tendency' or x=='volunteer' or x=='federation' or x =='danger' or x == 'enter' or x=='column'):
             label2score = label2score + 1
-        if(x=='relief' or x=='evacuation' or x =='displace' or x == 'provide' or x=='school' or x=='distribute' or x=='tourist' or x =='increase' or x == 'mask' or x=='majestic'):
+        if(x=='relief' or x=='evacuation' or x =='displace' or x == 'provide' or x=='show' or x=='water' or x=='disaster' or x =='ulat' or x == 'abo' or x=='morning'):
             label3score = label3score + 1
         if(x=='resident' or x=='include' or x =='province' or x == 'school' or x=='distribute' or x=='tourist' or x=='increase' or x =='mask' or x == 'north' or x=='majestic'):
             label4score = label4score + 1
@@ -123,28 +125,112 @@ def getlbllda(topic):
     #print(highest,'\n')
     #print(label1score,label2score,label3score,label4score,label5score)
     if(highest == 0):
+        labelscores.append('No Label')
+        labelscores.append('0')
+        tpclabel.append('No Label')
+        return(tpclabel)
+    elif(highest == label1score):
+        labelscores.append('support')
+        labelscores.append(str(label1score))
+        tpclabel.append('support')
+    elif(highest == label2score):
+        labelscores.append('volunteers')
+        labelscores.append(str(label2score))
+        tpclabel.append('volunteers')
+    elif(highest == label3score):
+        labelscores.append('lavaflow')
+        labelscores.append(str(label3score))
+        tpclabel.append('lavaflow')
+    elif(highest == label4score):
+        labelscores.append('mask')
+        labelscores.append(str(label4score))
+        tpclabel.append('mask')
+    elif(highest == label5score):
+        labelscores.append('beneficiaries')
+        labelscores.append(str(label5score))
+        tpclabel.append('beneficiaries')
+    elif(highest == label6score):
+        labelscores.append('linkages')
+        labelscores.append(str(label6score))
+        tpclabel.append('linkages')
+    elif(highest == label7score):
+        labelscores.append('alert')
+        labelscores.append(str(label7score))
+        tpclabel.append('alert')
+    elif(highest == label8score):
+        labelscores.append('record')
+        labelscores.append(str(label8score))
+        tpclabel.append('record')
+    elif(highest == label9score):
+        labelscores.append('evacuate')
+        labelscores.append(str(label9score))
+        tpclabel.append('evacuate')
+    elif(highest == label0score):
+        labelscores.append('lavaflow')
+        labelscores.append(str(label0score))
+        tpclabel.append('lavaflow')
+    else:
+        q=0
+    
+    if(status==1):
+        print('returnlbl')
+        return(tpclabel)
+    elif(status==2):
+        print('returnlst')
+        print(labelscores)
+        return(labelscores)
+
+def getlblldamal(topic):
+    print('mal')
+    label1score = 0;label2score = 0;label3score = 0;label4score = 0;label5score = 0;label6score = 0;label7score = 0;label8score = 0;label9score = 0;label0score = 0;
+    tpclabel = []
+    #print(topic,'\n\n')
+    for x in topic:
+        if(x=='resident' or x=='area' or x =='today' or x == 'live' or x=='day' or x=='video' or x=='experience' or x =='affected' or x == 'view' or x=='show'):
+            label1score = label1score + 1
+        if(x=='mayon' or x=='alert_level' or x =='evacuee' or x == 'raise' or x=='remain' or x=='leave' or x=='team' or x =='learn' or x == 'aalboroto' or x=='plume'):
+            label2score = label2score + 1
+        if(x=='safe' or x=='stay' or x =='beautiful' or x == 'time' or x=='danger_zone' or x=='disaster' or x=='evacuation' or x =='philippine' or x == 'umaga' or x=='advise'):
+            label3score = label3score + 1
+        if(x=='mayon' or x=='city' or x =='mocha' or x == 'shelter' or x=='explosion' or x=='nature' or x=='family' or x =='beauty' or x == 'pacific' or x=='video'):
+            label4score = label4score + 1
+        if(x=='abo' or x=='philippine' or x =='ashfall' or x == 'displace' or x=='level' or x=='safety' or x=='usok' or x =='provide' or x == 'local' or x=='makapal'):
+            label5score = label5score + 1
+        if(x=='mayon' or x=='ulat' or x =='school' or x == 'alert' or x=='bless' or x=='dangerous' or x=='residente' or x =='cover' or x == 'class' or x=='conduct'):
+            label6score = label6score + 1
+        if(x=='lava' or x=='ash' or x =='flow' or x == 'spew' or x=='town' or x=='crater' or x=='week' or x =='use' or x == 'kababayan' or x=='araw'):
+            label7score = label7score + 1
+        if(x=='activity' or x=='family' or x =='pray' or x == 'flee' or x=='affect' or x=='bulkan' or x=='province' or x =='warn' or x == 'active' or x=='move'):
+            label8score = label8score + 1
+        if(x=='eruption' or x=='photo' or x =='lahar' or x == 'volcanic' or x=='continue' or x=='hazardous' or x=='relief' or x =='authority' or x == 'smoke' or x=='credit'):
+            label9score = label9score + 1
+        if(x=='volcano' or x=='philippine' or x =='people' or x == 'evacuate' or x=='home' or x=='mount' or x=='support' or x =='threat' or x == 'relief_effort' or x=='local_partner'):
+            label0score = label0score + 1
+    highest = max(label1score,label2score,label3score,label4score,label5score,label6score,label7score,label8score,label9score,label0score)
+    #print(highest,'\n')
+    #print(label1score,label2score,label3score,label4score,label5score)
+    if(highest == 0):
         tpclabel.append('No Label')
     if(highest == label1score):
-        tpclabel.append('support')
+        tpclabel.append('real')
     if(highest == label2score):
-        tpclabel.append('volunteers')
-    if(highest == label3score):
-        tpclabel.append('lavaflow')
-    if(highest == label4score):
-        tpclabel.append('mask')
-    if(highest == label5score):
-        tpclabel.append('beneficiaries')
-    if(highest == label6score):
-        tpclabel.append('linkages')
-    if(highest == label7score):
-        tpclabel.append('alert')
-    if(highest == label8score):
-        tpclabel.append('record')
-    if(highest == label9score):
         tpclabel.append('evacuate')
+    if(highest == label3score):
+        tpclabel.append('warning')
+    if(highest == label4score):
+        tpclabel.append('scenery')
+    if(highest == label5score):
+        tpclabel.append('support')
+    if(highest == label6score):
+        tpclabel.append('advisory')
+    if(highest == label7score):
+        tpclabel.append('ashfall')
+    if(highest == label8score):
+        tpclabel.append('warning')
+    if(highest == label9score):
+        tpclabel.append('hazard')
     if(highest == label0score):
-        tpclabel.append('lavaflow')
-    print(tpclabel)
+        tpclabel.append('relief')
 
     return(tpclabel)
 

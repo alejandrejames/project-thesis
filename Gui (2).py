@@ -393,7 +393,10 @@ def genertp2(name):
                 entriesLDA.append(entry)
                 num = int(num) + 1
                 hitwrd.write('[]')
-                entry.insert(END,usmdls.getlbllda(topicsg))
+                if(ldaparam_opmenu_variable.get() == 'Gensim'):
+                    entry.insert(END,usmdls.getlbllda(topicsg,1))
+                else:
+                    entry.insert(END,usmdls.getlblldamal(topicsg))
                 topicsg = []
             elif(x=='*'):
                 texta.insert(END,'-')
@@ -499,7 +502,76 @@ def genertp2(name):
         for m in entriesNMF:
             m.grid(row=numrows+count,sticky=W,padx=1160)
             count =count + 1
+
+        numrows = numrows + count
+        labels2LDA = []
+        textas2LDA = []
+        entries2LDA = []
+        fl3 = open('ldaresult.res','r')
+        conts = fl3.readline()
+        flag=0
+        num = 0
+        topicsg = []
+        topicswrd = []
+        for x in conts:
+            if(x=='('):
+                label = Label(window,text='Topic'+str(num))
+                texta = Entry(window)
+                entry = Entry(window)
+            elif(x==')'):
+                labels2LDA.append(label)
+                textas2LDA.append(texta)
+                entries2LDA.append(entry)
+                num = int(num) + 1
+                if(ldaparam_opmenu_variable.get() == 'Gensim'):
+                    lstwrd = usmdls.getlbllda(topicsg,2)
+                    print(lstwrd)
+                    texta.insert(END,lstwrd[0])
+                    entry.insert(END,lstwrd[0])
+                else:
+                    continue
+                topicsg = []
+            elif(x=='*'):
+                continue
+            elif(x=='+'):
+                continue
+                charstr = ''.join(topicswrd)
+                topicsg.append(charstr)
+                topicswrd = []
+            elif(x==','):
+                q = 0
+            elif(x==' '):
+                q = 0
+            elif(x=='"'):
+                q = 0
+            elif(x=='['):
+                q = 0
+            elif(x==']'):
+                q = 0
+            elif(x=="'"):
+                q = 0
+            else:
+                texta.insert(END,x)
+                if(x=='0' or x=='1' or x=='2' or x=='3' or x=='4' or x=='5' or x=='6' or x=='7' or x=='8' or x=='9' or x=='.'):
+                    continue
+                else:
+                    topicswrd.append(x)
+        fl3.close()
+        count2 = count
+        for m in labels2LDA:
+            m.grid(row=numrows+count,sticky=W)
+            count2 =count2 + 1
         
+        count2 = 0
+        for m in textas2LDA:
+            m.grid(row=numrows+count,sticky=W,padx=100)
+            count2 =count2 + 1
+        
+        count2 = 0
+        for m in entries2LDA:
+            m.grid(row=numrows+count,sticky=W,padx=450)
+            count2 =count2 + 1
+            
     def topicmdling(name):
         tpcmdl_entry_4.insert(END,'Reading file contents...')
         with open(name, 'rb') as filehandle:
