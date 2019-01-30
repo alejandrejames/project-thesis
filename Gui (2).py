@@ -322,12 +322,26 @@ def genertp2(name):
             plt.savefig('nmfwc')
             plt.show()
     def openresultwindow():
-        window = tk.Toplevel(main)
-        window.title('Topic Analysis on Mayon Volcano Tweet')
-        window.geometry('1300x600')
-        window.maxsize(1300,600)
-        window.minsize(1300,600)
-        
+        def myfunction(event):
+            canvas.configure(scrollregion=canvas.bbox("all"),width=1257,height=555)
+        window1 = tk.Toplevel(main)
+        window1.title('Topic Analysis on Mayon Volcano Tweet')
+        window1.geometry('1300x600')
+        window1.maxsize(1300,600)
+        window1.minsize(1300,600)
+
+        myframe=Frame(window1,relief=GROOVE,width=50,height=100,bd=1)
+        myframe.place(x=0,y=0)
+
+        canvas=Canvas(myframe)
+        window=Frame(canvas)
+        myscrollbar=Scrollbar(myframe,orient="vertical",command=canvas.yview)
+        canvas.configure(yscrollcommand=myscrollbar.set)
+
+        myscrollbar.pack(side="right",fill="y")
+        canvas.pack(side="left")
+        canvas.create_window((0,0),window=window,anchor='nw')
+        window.bind("<Configure>",myfunction)
         
         result_label_1 = Label(window,text = 'Generated Results')
         result_label_1.grid(row=0,sticky=W,padx=610)
