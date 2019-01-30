@@ -28,6 +28,7 @@ import matplotlib.pyplot as plt
 import random
 from wordcloud import WordCloud, STOPWORDS
 import tkinter as tk
+import os
 
 
 def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
@@ -189,7 +190,9 @@ def ldamdl(corpus,data_lemmatized,numtopics,randomstate,update,tpasses,wrdpt):
 def mallda(corpus,data_lemmatized,numtopics,wpt,iterat):
     print("Traning..")
     id2word = corpora.Dictionary(data_lemmatized)
-    mallet_path = "C:/Users/Asus/Documents/project-thesis/mallet-2.0.8/bin/mallet"
+    mallet_path = os.getcwd()
+    print(mallet_path)
+    mallet_path = mallet_path + "/mallet-2.0.8/bin/mallet"
     ldamallet = gensim.models.wrappers.LdaMallet(mallet_path, corpus=corpus, num_topics=numtopics, id2word=id2word,workers=4, prefix=None,optimize_interval=0, iterations=iterat)
     #pprint(ldamallet.show_topics(formatted=False,num_topics=numtopics, num_words=wpt))
     data = ldamallet.show_topics(formatted=True,num_topics=numtopics, num_words=wpt)
