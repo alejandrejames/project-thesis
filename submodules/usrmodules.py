@@ -70,25 +70,25 @@ def getlblnmf(topic):
     #print(label1score,label2score,label3score,label4score,label5score)
     if(highest == 0):
         tpclabel.append('No Label')
-    if(highest == label1score):
+    elif(highest == label1score):
         tpclabel.append('evacuate')
-    if(highest == label2score):
+    elif(highest == label2score):
         tpclabel.append('pray')
-    if(highest == label3score):
+    elif(highest == label3score):
         tpclabel.append('augment')
-    if(highest == label4score):
+    elif(highest == label4score):
         tpclabel.append('experience')
-    if(highest == label5score):
+    elif(highest == label5score):
         tpclabel.append('outreach')
-    if(highest == label6score):
+    elif(highest == label6score):
         tpclabel.append('lavaflow')
-    if(highest == label7score):
+    elif(highest == label7score):
         tpclabel.append('suspension')
-    if(highest == label8score):
+    elif(highest == label8score):
         tpclabel.append('dangerous')
-    if(highest == label9score):
+    elif(highest == label9score):
         tpclabel.append('prone')
-    if(highest == label0score):
+    elif(highest == label0score):
         tpclabel.append('sunrise')
     #print(tpclabel)
 
@@ -211,25 +211,25 @@ def getlblldamal(topic):
     #print(label1score,label2score,label3score,label4score,label5score)
     if(highest == 0):
         tpclabel.append('No Label')
-    if(highest == label1score):
+    elif(highest == label1score):
         tpclabel.append('real')
-    if(highest == label2score):
+    elif(highest == label2score):
         tpclabel.append('evacuate')
-    if(highest == label3score):
+    elif(highest == label3score):
         tpclabel.append('warning')
-    if(highest == label4score):
+    elif(highest == label4score):
         tpclabel.append('scenery')
-    if(highest == label5score):
+    elif(highest == label5score):
         tpclabel.append('support')
-    if(highest == label6score):
+    elif(highest == label6score):
         tpclabel.append('advisory')
-    if(highest == label7score):
+    elif(highest == label7score):
         tpclabel.append('ashfall')
-    if(highest == label8score):
+    elif(highest == label8score):
         tpclabel.append('warning')
-    if(highest == label9score):
+    elif(highest == label9score):
         tpclabel.append('hazard')
-    if(highest == label0score):
+    elif(highest == label0score):
         tpclabel.append('relief')
 
     return(tpclabel)
