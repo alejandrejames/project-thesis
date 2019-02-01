@@ -161,7 +161,6 @@ def mkcorpus(data_lemmatized):
     return corpus
 
 def ldamdl(corpus,data_lemmatized,numtopics,randomstate,update,tpasses,wrdpt):
-    print('Numtopics:',numtopics,'Random_state:',randomstate,'Iterations',update,'tpasses:',tpasses,'wrdpt:',wrdpt)
     id2word = corpora.Dictionary(data_lemmatized)
     #print(data_lemmatized,numtopics,randomstate,update,chunksize,tpasses)
     lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
@@ -191,12 +190,10 @@ def mallda(corpus,data_lemmatized,numtopics,wpt,iterat):
     print("Traning..")
     id2word = corpora.Dictionary(data_lemmatized)
     mallet_path = os.getcwd()
-    print(mallet_path)
     mallet_path = mallet_path + "/mallet-2.0.8/bin/mallet"
     ldamallet = gensim.models.wrappers.LdaMallet(mallet_path, corpus=corpus, num_topics=numtopics, id2word=id2word,workers=4, prefix=None,optimize_interval=0, iterations=iterat)
     #pprint(ldamallet.show_topics(formatted=False,num_topics=numtopics, num_words=wpt))
     data = ldamallet.show_topics(formatted=True,num_topics=numtopics, num_words=wpt)
-    print('-------------------------------------------------------------------')
     #print(str(data))
     lda_model = gensim.models.wrappers.ldamallet.malletmodel2ldamodel(ldamallet)
     vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
@@ -214,7 +211,6 @@ def nmfmdl(data,numtopics,mfeatures,wpt,iterat,rstate):
     #obtain a NMF model.
     model = NMF(n_components=num_topics, init='nndsvd',max_iter=iterat);
     #fit the model
-    print(model)
     model.fit(xtfidf_norm)
     def get_nmf_topics(model, n_top_words):
     

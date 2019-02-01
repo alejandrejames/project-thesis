@@ -292,7 +292,6 @@ tpcmdl_progressbar.grid(row=10,sticky=W)
 #Generate Topic Models Ver.2
 def genertp2(name):
     def viewpyldavis():
-        print('ok')
         new=2
         webbrowser.open('LDA_Visualization.html',new=new)
     def freqbar(model):
@@ -503,149 +502,19 @@ def genertp2(name):
             m.grid(row=numrows+count,sticky=W,padx=1160)
             count =count + 1
 
-        #Model Precision
-        print(numrows,'+',count)
-        numrows2 = numrows + count + 1
-        labels2LDA = []
-        textas2LDA = []
-        entries2LDA = []
-        fl3 = open('ldaresult.res','r')
-        conts = fl3.readline()
-        flag=0
-        num = 0
-        topicsg = []
-        topicswrd = []
-        totalprecision = 0
-        for x in conts:
-            if(x=='('):
-                label = Label(window,text='Topic'+str(num))
-                texta = Entry(window,width=40)
-                entry = Entry(window)
-            elif(x==')'):
-                labels2LDA.append(label)
-                textas2LDA.append(texta)
-                entries2LDA.append(entry)
-                num = int(num) + 1
-                if(ldaparam_opmenu_variable.get() == 'Gensim'):
-                    lstwrd = usmdls.getlbllda(topicsg,2)
-                    texta.insert(END,lstwrd[0])
-                    entry.insert(END,lstwrd[1])
-                    totalprecision = totalprecision + int(lstwrd[1])
-                else:
-                    lstwrd = usmdls.getlblldamal(topicsg,2)
-                    texta.insert(END,lstwrd[0])
-                    entry.insert(END,lstwrd[1])
-                    totalprecision = totalprecision + int(lstwrd[1])
-                topicsg = []
-            elif(x=='*'):
-                continue
-            elif(x=='+'):
-                charstr = ''.join(topicswrd)
-                topicsg.append(charstr)
-                topicswrd = []
-            elif(x==','):
-                q = 0
-            elif(x==' '):
-                q = 0
-            elif(x=='"'):
-                q = 0
-            elif(x=='['):
-                q = 0
-            elif(x==']'):
-                q = 0
-            elif(x=="'"):
-                q = 0
-            else:
-                if(x=='0' or x=='1' or x=='2' or x=='3' or x=='4' or x=='5' or x=='6' or x=='7' or x=='8' or x=='9' or x=='.'):
-                    continue
-                else:
-                    topicswrd.append(x)
-        fl3.close()
         
-        count2 = count
-        for m in labels2LDA:
-            m.grid(row=numrows2+count2,sticky=W)
-            count2 =count2 + 1
-        
-        count2 = count
-        for m in textas2LDA:
-            m.grid(row=numrows2+count2,sticky=W,padx=100)
-            count2 =count2 + 1
-        
-        count2 = count
-        for m in entries2LDA:
-            m.grid(row=numrows2+count2,sticky=W,padx=450)
-            count2 =count2 + 1
-
-        #NFM Model Precision
-        numrows2 = numrows + count
-        labels2NMF = []
-        textas2NMF = []
-        entries2NMF = []
-        fl = open('nmfresult.res','r')
-        conts = fl.readline()
-        flag=0
-        num = 0
-        topicsg = []
-        topicwrd = []
-        totalprecision2 = 0
-        for x in conts:
-            if(x=='['):
-                label = Label(window,text='Topic'+str(num))
-                texta = Entry(window,width=40)
-                entry = Entry(window)
-            elif(x==']'):
-                labels2NMF.append(label)
-                textas2NMF.append(texta)
-                entries2NMF.append(entry)
-                num = int(num) + 1
-                #print(topicsg,'\n\n')
-                lstwrd = usmdls.getlblnmf(topicsg,2)
-                texta.insert(END,lstwrd[0])
-                entry.insert(END,lstwrd[1])
-                totalprecision2 = totalprecision2 + int(lstwrd[1])
-                topicsg = []
-                print('\n\n')
-            elif(x==","):
-                q = 0
-                charstr = ''.join(topicwrd)
-                print(charstr)
-                topicsg.append(charstr)
-                topicwrd = []
-            elif(x=='\''):
-                continue
-            elif(x==' '):
-                continue
-            else:
-                topicwrd.append(x)
-        fl.close()
             
-        count2 = count
-        for m in labels2NMF:
-            m.grid(row=numrows2+count2,sticky=W,padx=750)
-            count2 =count2 + 1
         
-        count2 = count
-        for m in textas2NMF:
-            m.grid(row=numrows2+count2,sticky=W,padx=825)
-            count2 =count2 + 1
-        
-        count2 = count
-        for m in entries2NMF:
-            m.grid(row=numrows2+count2,sticky=W,padx=1160)
-            count2 =count2 + 1
-            
-        print(num)
         window_label_precision = Label(window,text='Precision').grid(row=numrows2+count2 + 1)
         window_entry_precision = Entry(window)
         window_entry_precision.grid(row=numrows2+count2+1,sticky=W,padx=450)
-        totalprecision = (totalprecision/(num * 10)) * 100
+        totalprecision = (totalprecision/(int(ldaparam_entry_1.get()) * int(ldaparam_entry_6.get()))) * 100
         window_entry_precision.insert(END,str(totalprecision)+'%')
-
+        
         window_label_precision2 = Label(window,text='Precision').grid(row=numrows2+count2 + 1)
         window_entry_precision2 = Entry(window)
         window_entry_precision2.grid(row=numrows2+count2+1,sticky=W,padx=1160)
-        totalprecision2 = (totalprecision2/(num * 10)) * 100
+        totalprecision2 = (totalprecision2/(int(nmfparam_entry_1.get()) * int(nmfparam_entry_3.get()))) * 100
         window_entry_precision2.insert(END,str(totalprecision2)+'%')
     def topicmdling(name):
         tpcmdl_entry_4.insert(END,'Reading file contents...')
@@ -659,7 +528,6 @@ def genertp2(name):
             tpcmdl_entry_4.see(END)
             outres1 = t2.ldamdl(corpus,cleaned,int(ldaparam_entry_1.get()) ,int(ldaparam_entry_2.get()) ,int(ldaparam_entry_3.get()) ,int(ldaparam_entry_5.get()) ,int(ldaparam_entry_6.get()))
         else:
-            print('Gensim')
             tpcmdl_entry_4.insert(END,'LDA Training...')
             tpcmdl_entry_4.see(tk.END)
             outres1 = t2.mallda(corpus,cleaned,int(ldaparam_entry_1.get()),int(ldaparam_entry_6.get()),int(ldaparam_entry_3.get()))

@@ -38,7 +38,6 @@ def collectdata(query,num,startd,endd,flname):
     collect = 'python Exporter.py --querysearch "'
     collect = collect + query
     collect = collect + '" --since '+startd+' --until '+endd+' --maxtweets '+num+' --output '+flname+'.csv'
-    print(collect)
     subprocess.call(collect, shell=True)
 
 def getlblnmf(topic,status):
@@ -58,7 +57,6 @@ def getlblnmf(topic,status):
     tpclabel = []
     for x in topic:
         if(x in label1lst):
-            print(x)
             label1score = label1score + 1
         if(x in label2lst):
             label2score = label2score + 1
@@ -148,7 +146,6 @@ def getlbllda(topic,status):
     label9lst = ['lava','safe','flow','flee','photo','danger_zone','area','reach','smoke','video']
 
     
-    print('gen')
     label1score = 0;label2score = 0;label3score = 0;label4score = 0;label5score = 0;label6score = 0;label7score = 0;label8score = 0;label9score = 0;
     tpclabel = []
     labelscores = []
@@ -180,11 +177,8 @@ def getlbllda(topic,status):
         labelscores.append('0')
         tpclabel.append('No Label')
         if(status==1):
-            print('returnlbl')
             return(tpclabel)
         else:
-            print('returnlst')
-            print(labelscores[0])
             return(labelscores)
     elif(highest == label1score):
         labelscores.append('support')
@@ -226,11 +220,8 @@ def getlbllda(topic,status):
         q=0
     
     if(status==1):
-        print('returnlbl')
         return(tpclabel)
     elif(status==2):
-        print('returnlst')
-        print(labelscores[0])
         return(labelscores)
 
 def getlblldamal(topic,status):
@@ -316,10 +307,8 @@ def getlblldamal(topic,status):
         tpclabel.append('relief')
 
     if(status==1):
-        print('returnlbl')
         return(tpclabel)
     elif(status==2):
-        print('returnlst')
         return(labelscores)
 
 def ldaout(fl4):
@@ -417,7 +406,6 @@ def ldafreqbar():
 
     thelist2 = []
     thelist3 = []
-    print(len(thelist))
     for x in range(0,len(thelist)):
         num = 0
         if(thelist[x] in thelist2):
@@ -481,7 +469,6 @@ def nmffreqbar():
 
     thelist2 = []
     thelist3 = []
-    print(thelist)
     for x in range(0,len(thelist)):
         num = 0
         if(thelist[x] in thelist2):
