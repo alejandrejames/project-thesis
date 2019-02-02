@@ -87,43 +87,43 @@ def getlblnmf(topic,status):
             return(tpclabel)
         else:
             return(labelscores)
-    elif(highest == label1score):
+    if(highest == label1score):
         labelscores.append('evacuate')
         labelscores.append(label1score)
         tpclabel.append('evacuate')
-    elif(highest == label2score):
+    if(highest == label2score):
         labelscores.append('pray')
         labelscores.append(label2score)
         tpclabel.append('pray')
-    elif(highest == label3score):
+    if(highest == label3score):
         labelscores.append('augment')
         labelscores.append(label3score)
         tpclabel.append('augment')
-    elif(highest == label4score):
+    if(highest == label4score):
         labelscores.append('experience')
         labelscores.append(label4score)
         tpclabel.append('experience')
-    elif(highest == label5score):
+    if(highest == label5score):
         labelscores.append('outreach')
         labelscores.append(label5score)
         tpclabel.append('outreach')
-    elif(highest == label6score):
+    if(highest == label6score):
         labelscores.append('lavalflow')
         labelscores.append(label6score)
         tpclabel.append('lavaflow')
-    elif(highest == label7score):
+    if(highest == label7score):
         labelscores.append('suspension')
         labelscores.append(label7score)
         tpclabel.append('suspension')
-    elif(highest == label8score):
+    if(highest == label8score):
         labelscores.append('dangerous')
         labelscores.append(label8score)
         tpclabel.append('dangerous')
-    elif(highest == label9score):
+    if(highest == label9score):
         labelscores.append('prone')
         labelscores.append(label9score)
         tpclabel.append('prone')
-    elif(highest == label0score):
+    if(highest == label0score):
         labelscores.append('sunrise')
         labelscores.append(label0score)
         tpclabel.append('sunrise')
@@ -180,44 +180,42 @@ def getlbllda(topic,status):
             return(tpclabel)
         else:
             return(labelscores)
-    elif(highest == label1score):
+    if(highest == label1score):
         labelscores.append('support')
         labelscores.append(str(label1score))
         tpclabel.append('support')
-    elif(highest == label2score):
+    if(highest == label2score):
         labelscores.append('volunteers')
         labelscores.append(str(label2score))
         tpclabel.append('volunteers')
-    elif(highest == label3score):
+    if(highest == label3score):
         labelscores.append('lavaflow')
         labelscores.append(str(label3score))
         tpclabel.append('lavaflow')
-    elif(highest == label4score):
+    if(highest == label4score):
         labelscores.append('mask')
         labelscores.append(str(label4score))
         tpclabel.append('mask')
-    elif(highest == label5score):
+    if(highest == label5score):
         labelscores.append('beneficiaries')
         labelscores.append(str(label5score))
         tpclabel.append('beneficiaries')
-    elif(highest == label6score):
+    if(highest == label6score):
         labelscores.append('linkages')
         labelscores.append(str(label6score))
         tpclabel.append('linkages')
-    elif(highest == label7score):
+    if(highest == label7score):
         labelscores.append('alert')
         labelscores.append(str(label7score))
         tpclabel.append('alert')
-    elif(highest == label8score):
+    if(highest == label8score):
         labelscores.append('record')
         labelscores.append(str(label8score))
         tpclabel.append('record')
-    elif(highest == label9score):
+    if(highest == label9score):
         labelscores.append('evacuate')
         labelscores.append(str(label9score))
         tpclabel.append('evacuate')
-    else:
-        q=0
     
     if(status==1):
         return(tpclabel)

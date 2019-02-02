@@ -503,19 +503,6 @@ def genertp2(name):
             count =count + 1
 
         
-            
-        
-        window_label_precision = Label(window,text='Precision').grid(row=numrows2+count2 + 1)
-        window_entry_precision = Entry(window)
-        window_entry_precision.grid(row=numrows2+count2+1,sticky=W,padx=450)
-        totalprecision = (totalprecision/(int(ldaparam_entry_1.get()) * int(ldaparam_entry_6.get()))) * 100
-        window_entry_precision.insert(END,str(totalprecision)+'%')
-        
-        window_label_precision2 = Label(window,text='Precision').grid(row=numrows2+count2 + 1)
-        window_entry_precision2 = Entry(window)
-        window_entry_precision2.grid(row=numrows2+count2+1,sticky=W,padx=1160)
-        totalprecision2 = (totalprecision2/(int(nmfparam_entry_1.get()) * int(nmfparam_entry_3.get()))) * 100
-        window_entry_precision2.insert(END,str(totalprecision2)+'%')
     def topicmdling(name):
         tpcmdl_entry_4.insert(END,'Reading file contents...')
         with open(name, 'rb') as filehandle:
