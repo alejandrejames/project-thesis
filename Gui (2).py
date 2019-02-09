@@ -384,7 +384,7 @@ def genertp2(name):
         for x in conts:
             if(x=='('):
                 label = Label(window,text='Topic'+str(num))
-                texta = Text(window,height=2,width=40)
+                texta = Text(window,height=3,width=40)
                 entry = Entry(window)
             elif(x==')'):
                 labelsLDA.append(label)
@@ -398,7 +398,8 @@ def genertp2(name):
                     entry.insert(END,usmdls.getlblldamal(topicsg,1))
                 topicsg = []
             elif(x=='*'):
-                texta.insert(END,'-')
+                continue
+                #texta.insert(END,'-')
             elif(x=='+'):
                 texta.insert(END,',')
                 hitwrd.write(',')
@@ -418,10 +419,11 @@ def genertp2(name):
             elif(x=="'"):
                 q = 0
             else:
-                texta.insert(END,x)
+                
                 if(x=='0' or x=='1' or x=='2' or x=='3' or x=='4' or x=='5' or x=='6' or x=='7' or x=='8' or x=='9' or x=='.'):
                     continue
                 else:
+                    texta.insert(END,x)
                     topicswrd.append(x)
                     hitwrd.write(x)
         hitwrd.write('-')
@@ -457,7 +459,7 @@ def genertp2(name):
         for x in conts:
             if(x=='['):
                 label = Label(window,text='Topic'+str(num))
-                texta = Text(window,height=2,width=40)
+                texta = Text(window,height=3,width=40)
                 entry = Entry(window)
             elif(x==']'):
                 labelsNMF.append(label)

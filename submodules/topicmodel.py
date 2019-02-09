@@ -198,6 +198,8 @@ def mallda(corpus,data_lemmatized,numtopics,wpt,iterat):
     lda_model = gensim.models.wrappers.ldamallet.malletmodel2ldamodel(ldamallet)
     vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
     pyLDAvis.save_html(vis, 'LDA_Visualization.html')
+    with open('ldamdl.lda', 'wb') as filehandle:
+            pickle.dump(str(data),filehandle,protocol=pickle.HIGHEST_PROTOCOL)
     return str(data)
     
 def nmfmdl(data,numtopics,mfeatures,wpt,iterat,rstate):

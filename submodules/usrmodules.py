@@ -41,16 +41,16 @@ def collectdata(query,num,startd,endd,flname):
     subprocess.call(collect, shell=True)
 
 def getlblnmf(topic,status):
-    label1lst = ['mayon','volcano','explode','sunday','abo','lumikas','photo','wait','mount','evacuee']
-    label2lst = ['safe','stay','ensure','relative','pray','bless','hope','ashfall','stop','praying']
-    label3lst = ['city','photo','boulevard','village','rise','hossi','pray','onslaught','augmentation','municipality']
-    label4lst = ['philippine','volcano','thought','sunrise','evacuate','sunday','threat','experience','relief_effort','local_partner']
-    label5lst = ['family','affect','outreach','friend','day','reminder','close','home','area','vision']
-    label6lst = ['lava','ash','abo','flow','fountaining','ulat','umaga','usok','glow','spew']
-    label7lst = ['level','tomorrow','suspend','class','private','public','downgrade','province','raise','major']
-    label8lst = ['people','evacuate','volcano','home','pray','die','mount','beautiful','threat','relief_effort']
-    label9lst = ['eruption','volcano','beautiful','day','hazardous','imminent','hour','warn','volcanic','kababayan']
-    label0lst = ['sale_period','province','beautiful','ash','disaster','dangerous','bless','aurora','evacuee','plume']
+    label1lst = ['mayon','volcano','explode','sunday','abo','lumikas','photo','wait','mount','evacuee']#evacuate
+    label2lst = ['safe','stay','ensure','relative','pray','bless','hope','ashfall','stop','praying']#pray
+    label3lst = ['city','photo','boulevard','village','rise','hossi','pray','onslaught','augmentation','municipality']#augment
+    label4lst = ['philippine','volcano','thought','sunrise','evacuate','sunday','threat','experience','relief_effort','local_partner']#experience
+    label5lst = ['family','affect','outreach','friend','day','reminder','close','home','area','vision']#outreach
+    label6lst = ['lava','ash','abo','flow','fountaining','ulat','umaga','usok','glow','spew']#lavaflow
+    label7lst = ['level','tomorrow','suspend','class','private','public','downgrade','province','raise','major']#suspension
+    label8lst = ['people','evacuate','volcano','home','pray','die','mount','beautiful','threat','relief_effort']#dangerous
+    label9lst = ['eruption','volcano','beautiful','day','hazardous','imminent','hour','warn','volcanic','kababayan']#prone
+    label0lst = ['sale_period','province','beautiful','ash','disaster','dangerous','bless','aurora','evacuee','plume']#sunrise
 
     labelscores = []
     label1score = 0;label2score = 0;label3score = 0;label4score = 0;label5score = 0;label6score = 0;label7score = 0;label8score = 0;label9score = 0;label0score = 0;
@@ -135,15 +135,15 @@ def getlblnmf(topic,status):
         return(labelscores)
 
 def getlbllda(topic,status):
-    label1lst = ['conduct','food','chapter','aid','remain','expect','effect','plan','force','service']
-    label2lst = ['relief','evacuation','displace','provide','show','water','disaster','ulat','abo','morning','ash','time','volcanic','spew','sign','summit','slope','warn','hour','continuosly']
-    label3lst = ['activity','today','detail','contact','tendency','volunteer','federation','danger','enter','column']
-    label4lst = ['resident','include','province','school','distribute','tourist','increase','mask','north','majestic']
-    label5lst = ['people','family','evacuate','donation','affect','home','permanent','student','thousand','benificiary']
-    label6lst = ['alert_level','good','local','authority','raise','beautiful','work','fascinating','menacing','collectively']
-    label7lst = ['volcano','philippine','stay','city','support','week','live','active','alert','mount']
-    label8lst = ['mayon','eruption','continue','kababayan','sunday','visit','recent','naitala','nature','posible','possible']
-    label9lst = ['lava','safe','flow','flee','photo','danger_zone','area','reach','smoke','video']
+    label1lst = ['conduct','food','chapter','aid','remain','expect','effect','plan','force','service']#support
+    label2lst = ['relief','evacuation','displace','provide','show','water','disaster','ulat','abo','morning','ash','time','volcanic','spew','sign','summit','slope','warn','hour','continuosly']#lavaflow
+    label3lst = ['activity','today','detail','contact','tendency','volunteer','federation','danger','enter','column']#volunteers
+    label4lst = ['resident','include','province','school','distribute','tourist','increase','mask','north','majestic']#mask
+    label5lst = ['people','family','evacuate','donation','affect','home','permanent','student','thousand','benificiary']#beneficiaries
+    label6lst = ['alert_level','good','local','authority','raise','beautiful','work','fascinating','menacing','collectively']#linkages
+    label7lst = ['volcano','philippine','stay','city','support','week','live','active','alert','mount']#alert
+    label8lst = ['mayon','eruption','continue','kababayan','sunday','visit','recent','naitala','nature','posible','possible']#record
+    label9lst = ['lava','safe','flow','flee','photo','danger_zone','area','reach','smoke','video']#evacuate
 
     
     label1score = 0;label2score = 0;label3score = 0;label4score = 0;label5score = 0;label6score = 0;label7score = 0;label8score = 0;label9score = 0;
@@ -185,13 +185,13 @@ def getlbllda(topic,status):
         labelscores.append(str(label1score))
         tpclabel.append('support')
     if(highest == label2score):
-        labelscores.append('volunteers')
-        labelscores.append(str(label2score))
-        tpclabel.append('volunteers')
-    if(highest == label3score):
         labelscores.append('lavaflow')
-        labelscores.append(str(label3score))
+        labelscores.append(str(label2score))
         tpclabel.append('lavaflow')
+    if(highest == label3score):
+        labelscores.append('volunteer')
+        labelscores.append(str(label3score))
+        tpclabel.append('volunteer')
     if(highest == label4score):
         labelscores.append('mask')
         labelscores.append(str(label4score))
@@ -218,21 +218,26 @@ def getlbllda(topic,status):
         tpclabel.append('evacuate')
     
     if(status==1):
+        m=0
+        for q in tpclabel:
+            m = m  + 1
+        if(m>=2):
+            tpclabel = 'No Label'
         return(tpclabel)
     elif(status==2):
         return(labelscores)
 
 def getlblldamal(topic,status):
     print('mal')
-    label1lst = ['resident','area','today','live','day','video','experience','affected','view','show']
-    label2lst = ['mayon','alert_level','evacuee','raise','remain','leave','team','learn','aalboroto','plume']
-    label3lst = ['safe','stay','beautiful','time','danger_zone','disaster','evacuation','philippine','umaga','advise','activity','family','pray','flee','affect','bulkan','province','warn','active','move']
-    label4lst = ['mayon','city','mocha','shelter','explosion','nature','family','beauty','pacific','video']
-    label5lst = ['abo','philippine','ashfall','displace','level','safety','usok','provide','local','makapal']
-    label6lst = ['mayon','ulat','school','alert','bless','dangerous','residente','cover','class','conduct']
-    label7lst = ['lava','ash','flow','spew','town','crater','week','use','kababayan','araw']
-    label8lst = ['eruption','photo','lahar','volcanic','continue','hazardous','relief','authority','smoke','credit']
-    label9lst = ['volcano','philippine','people','evacuate','home','mount','support','threat','relief_effort','local_partner']
+    label1lst = ['resident','area','today','live','day','video','experience','affected','view','show']#real
+    label2lst = ['mayon','alert_level','evacuee','raise','remain','leave','team','learn','aalboroto','plume']#evacuate
+    label3lst = ['safe','stay','beautiful','time','danger_zone','disaster','evacuation','philippine','umaga','advise','activity','family','pray','flee','affect','bulkan','province','warn','active','move']#warning
+    label4lst = ['mayon','city','mocha','shelter','explosion','nature','family','beauty','pacific','video']#scenery
+    label5lst = ['abo','philippine','ashfall','displace','level','safety','usok','provide','local','makapal']#support
+    label6lst = ['mayon','ulat','school','alert','bless','dangerous','residente','cover','class','conduct']#advisory
+    label7lst = ['lava','ash','flow','spew','town','crater','week','use','kababayan','araw']#ashfall
+    label8lst = ['eruption','photo','lahar','volcanic','continue','hazardous','relief','authority','smoke','credit']#hazard
+    label9lst = ['volcano','philippine','people','evacuate','home','mount','support','threat','relief_effort','local_partner']#relief
     labelscores = []
     label1score = 0;label2score = 0;label3score = 0;label4score = 0;label5score = 0;label6score = 0;label7score = 0;label8score = 0;label9score = 0;
     tpclabel = []
@@ -372,12 +377,13 @@ def ldafreqbar():
         lda_model = pickle.load(filehandle)
     stringfrm = ""
     thelist = []
+    print(lda_model.strip('+'))
     for x in lda_model:
-        if(x == '+'):
+        if(x == '*'):
             thelist.append(stringfrm)
             #print(stringfrm)
             stringfrm = ""
-        elif(x == '\''):
+        elif(x == "'"):
               continue
         elif(x == '['):
             continue
@@ -385,7 +391,7 @@ def ldafreqbar():
             continue
         elif(x == ')'):
             continue
-        elif(x == '*'):
+        elif(x == '+'):
             continue
         elif(x == '-'):
             continue
@@ -399,25 +405,28 @@ def ldafreqbar():
             continue
         elif(x == '"'):
             continue
+        elif(x== ','):
+            continue
         else:
             stringfrm = stringfrm + x
 
+    thelist.append(stringfrm)
     thelist2 = []
     thelist3 = []
-    for x in range(0,len(thelist)):
+    for x in thelist:
         num = 0
-        if(thelist[x] in thelist2):
+        if(x in thelist2):
             continue
         else:
-            for y in range(0,len(thelist)):
-                if(thelist[x]==thelist[y]):
+            for y in thelist:
+                if(x==y):
                     num = num + 1
                 else:
                     continue
             #print("Word=",thelist[x],"Occur=",num)
-            thelist2.append(thelist[x])
+            thelist2.append(x)
             thelist3.append(num)
-          
+      
     objects = thelist2
     y_pos = np.arange(len(thelist2))
     performance = thelist3
@@ -435,6 +444,7 @@ def nmffreqbar():
         lda_model = pickle.load(filehandle)
     stringfrm = ""
     thelist = []
+    print(lda_model)
     for x in lda_model:
         if(x == ','):
             thelist.append(stringfrm)
@@ -455,7 +465,9 @@ def nmffreqbar():
         elif(x == ' '):
             continue
         elif(x == ']'):
-            continue
+            thelist.append(stringfrm)
+            #print(stringfrm)
+            stringfrm = ""
         elif(x == '1' or x == '2' or x == '3' or x == '4' or x == '5' or x == '6' or x == '7' or x == '8' or x == '9' or x == '0'):
             continue
         elif(x == '.'):
@@ -467,18 +479,19 @@ def nmffreqbar():
 
     thelist2 = []
     thelist3 = []
-    for x in range(0,len(thelist)):
+    for x in thelist:
+        print(x)
         num = 0
-        if(thelist[x] in thelist2):
+        if(x in thelist2):
             continue
         else:
-            for y in range(0,len(thelist)):
-                if(thelist[x]==thelist[y]):
+            for y in thelist:
+                if(x==y):
                     num = num + 1
                 else:
                     continue
             #print("Word=",thelist[x],"Occur=",num)
-            thelist2.append(thelist[x])
+            thelist2.append(x)
             thelist3.append(num)
           
     objects = thelist2
