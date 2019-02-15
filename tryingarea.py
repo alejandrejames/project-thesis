@@ -31,29 +31,99 @@ import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
 import matplotlib.pyplot as plt
 
-with open('files/lbllistlda.lst','r') as filehandle:
-     stringfrm = filehandle.readline()
+#topics = ['mayon','volcano','eruption','philippine','people','alert_level','ash','good','relief','flee',]
+topics = ['evacuate','displace','home','resident','smoke','authority','raise','beautiful','permanent','increase']
 
-lbllist = stringfrm.split(',')
+def getlbllda(topics):
+     with open('files/lbllistlda.lst','r') as filehandle:
+          stringfrm = filehandle.readline()
+     
+     lbllist = stringfrm.split(',')
+     num = 0
+     labelscores = []
+     for x in (lbllist):
+          labelscores.append(int(0))
+          num = num + 1
 
-labelwrds = []
-num = 0
-for x in lbllist:
-     words = []
-     with open('files/ldalabel-'+x+'.lbl') as filehandle:
-          sentence = filehandle.readline()
-          words = sentence.split()
-     labelwrds.append(words)
-     num = num + 1
+     for x in range(0,num):
+          score = 0
+          labelwrds = []
+          with open('files/ldalabel-'+lbllist[x]+'.lbl') as file:
+               wrds = file.readline()
+               labelwrds = wrds.split(',')
+          print('scoring')     
+          for y in topics:
+               if y in labelwrds:
+                   score = score + 1
+               else:
+                    continue
+               print('--',y)
+          
+          
+          labelscores[x] = score
+     
+     print('------------------------------')
+     print(lbllist)
+     print(labelscores)
+     counter = 0
+     maxscore = max(labelscores)
+     for x in labelscores:
+          if(x==maxscore):
+               counter = counter + 1
+          else:
+               continue
+     if(maxscore == 0 or counter > 1):
+          tplbl = 'No Label'
+     else:
+          indexnum = labelscores.index(maxscore)
+          tplbl = lbllist[indexnum]
 
-labellistscores = []
-for y in range(0,num):
-     labellistscores.append(int(0))
+     return tplbl
 
-topic = ['relief','evacuation','displace','provide','alert_level','good','local','authority','raise','beautiful','work',]
-for x in topic:
-     for y in range(0,num):
-          if(x in labelwrds[y]):
-               labellistscores[y] = labellistscores[y] + 1
+def getlblnmf(topics):
+     with open('files/lbllistnmf.lst','r') as filehandle:
+          stringfrm = filehandle.readline()
+     
+     lbllist = stringfrm.split(',')
+     num = 0
+     labelscores = []
+     for x in (lbllist):
+          labelscores.append(int(0))
+          num = num + 1
 
+     for x in range(0,num):
+          score = 0
+          labelwrds = []
+          with open('files/nmflabel-'+lbllist[x]+'.lbl') as file:
+               wrds = file.readline()
+               labelwrds = wrds.split(',')
+          print('scoring')     
+          for y in topics:
+               if y in labelwrds:
+                   score = score + 1
+               else:
+                    continue
+               print('--',y)
+          
+          
+          labelscores[x] = score
+     
+     print('------------------------------')
+     print(lbllist)
+     print(labelscores)
+     counter = 0
+     maxscore = max(labelscores)
+     for x in labelscores:
+          if(x==maxscore):
+               counter = counter + 1
+          else:
+               continue
+     if(maxscore == 0 or counter > 1):
+          tplbl = 'No Label'
+     else:
+          indexnum = labelscores.index(maxscore)
+          tplbl = lbllist[indexnum]
 
+     return tplbl
+
+print(getlblnmf(topics))

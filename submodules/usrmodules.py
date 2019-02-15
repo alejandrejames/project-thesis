@@ -40,279 +40,143 @@ def collectdata(query,num,startd,endd,flname):
     collect = collect + '" --since '+startd+' --until '+endd+' --maxtweets '+num+' --output '+flname+'.csv'
     subprocess.call(collect, shell=True)
 
-def getlblnmf(topic,status):
-    label1lst = ['mayon','volcano','explode','sunday','abo','lumikas','photo','wait','mount','evacuee']#evacuate
-    label2lst = ['safe','stay','ensure','relative','pray','bless','hope','ashfall','stop','praying']#pray
-    label3lst = ['city','photo','boulevard','village','rise','hossi','pray','onslaught','augmentation','municipality']#augment
-    label4lst = ['philippine','volcano','thought','sunrise','evacuate','sunday','threat','experience','relief_effort','local_partner']#experience
-    label5lst = ['family','affect','outreach','friend','day','reminder','close','home','area','vision']#outreach
-    label6lst = ['lava','ash','abo','flow','fountaining','ulat','umaga','usok','glow','spew']#lavaflow
-    label7lst = ['level','tomorrow','suspend','class','private','public','downgrade','province','raise','major']#suspension
-    label8lst = ['people','evacuate','volcano','home','pray','die','mount','beautiful','threat','relief_effort']#dangerous
-    label9lst = ['eruption','volcano','beautiful','day','hazardous','imminent','hour','warn','volcanic','kababayan']#prone
-    label0lst = ['sale_period','province','beautiful','ash','disaster','dangerous','bless','aurora','evacuee','plume']#sunrise
-
+def getlblnmf(topics,status):
+    with open('files/lbllistnmf.lst','r') as filehandle:
+          stringfrm = filehandle.readline()
+     
+    lbllist = stringfrm.split(',')
+    num = 0
     labelscores = []
-    label1score = 0;label2score = 0;label3score = 0;label4score = 0;label5score = 0;label6score = 0;label7score = 0;label8score = 0;label9score = 0;label0score = 0;
-    tpclabel = []
-    for x in topic:
-        if(x in label1lst):
-            label1score = label1score + 1
-        if(x in label2lst):
-            label2score = label2score + 1
-        if(x in label3lst):
-            label3score = label3score + 1
-        if(x in label4lst):
-            label4score = label4score + 1
-        if(x in label5lst):
-            label5score = label5score + 1
-        if(x in label6lst):
-            label6score = label6score + 1
-        if(x in label7lst):
-            label7score = label7score + 1
-        if(x in label8lst):
-            label8score = label8score + 1
-        if(x in label9lst):
-            label9score = label9score + 1
-        if(x in label0lst):
-            label0score = label0score + 1
-    highest = max(label1score,label2score,label3score,label4score,label5score,label6score,label7score,label8score,label9score,label0score)
-    #print(highest,'\n')
-    #print(label1score,label2score,label3score,label4score,label5score)
-    if(highest == 0):
-        labelscores.append('No Label')
-        labelscores.append('0')
-        tpclabel.append('No Label')
-        if(status==1):
-            return(tpclabel)
-        else:
-            return(labelscores)
-    if(highest == label1score):
-        labelscores.append('evacuate')
-        labelscores.append(label1score)
-        tpclabel.append('evacuate')
-    if(highest == label2score):
-        labelscores.append('pray')
-        labelscores.append(label2score)
-        tpclabel.append('pray')
-    if(highest == label3score):
-        labelscores.append('augment')
-        labelscores.append(label3score)
-        tpclabel.append('augment')
-    if(highest == label4score):
-        labelscores.append('experience')
-        labelscores.append(label4score)
-        tpclabel.append('experience')
-    if(highest == label5score):
-        labelscores.append('outreach')
-        labelscores.append(label5score)
-        tpclabel.append('outreach')
-    if(highest == label6score):
-        labelscores.append('lavalflow')
-        labelscores.append(label6score)
-        tpclabel.append('lavaflow')
-    if(highest == label7score):
-        labelscores.append('suspension')
-        labelscores.append(label7score)
-        tpclabel.append('suspension')
-    if(highest == label8score):
-        labelscores.append('dangerous')
-        labelscores.append(label8score)
-        tpclabel.append('dangerous')
-    if(highest == label9score):
-        labelscores.append('prone')
-        labelscores.append(label9score)
-        tpclabel.append('prone')
-    if(highest == label0score):
-        labelscores.append('sunrise')
-        labelscores.append(label0score)
-        tpclabel.append('sunrise')
-    #print(tpclabel)
+    for x in (lbllist):
+        labelscores.append(int(0))
+        num = num + 1
 
-    if(status==1):
-        return(tpclabel)
+    for x in range(0,num):
+        score = 0
+        labelwrds = []
+        with open('files/nmflabel-'+lbllist[x]+'.lbl') as file:
+            wrds = file.readline()
+            labelwrds = wrds.split(',')
+        print('scoring')     
+        for y in topics:
+            if y in labelwrds:
+                score = score + 1
+            else:
+                continue
+            print('--',y)
+          
+          
+        labelscores[x] = score
+     
+    print('------------------------------')
+    print(lbllist)
+    print(labelscores)
+    counter = 0
+    maxscore = max(labelscores)
+    for x in labelscores:
+        if(x==maxscore):
+            counter = counter + 1
+        else:
+            continue
+    if(maxscore == 0 or counter > 1):
+        tplbl = 'No Label'
     else:
-        return(labelscores)
+        indexnum = labelscores.index(maxscore)
+        tplbl = lbllist[indexnum]
 
-def getlbllda(topic,status):
-    label1lst = ['conduct','food','chapter','aid','remain','expect','effect','plan','force','service']#support
-    label2lst = ['relief','evacuation','displace','provide','show','water','disaster','ulat','abo','morning','ash','time','volcanic','spew','sign','summit','slope','warn','hour','continuosly']#lavaflow
-    label3lst = ['activity','today','detail','contact','tendency','volunteer','federation','danger','enter','column']#volunteers
-    label4lst = ['resident','include','province','school','distribute','tourist','increase','mask','north','majestic']#mask
-    label5lst = ['people','family','evacuate','donation','affect','home','permanent','student','thousand','benificiary']#beneficiaries
-    label6lst = ['alert_level','good','local','authority','raise','beautiful','work','fascinating','menacing','collectively']#linkages
-    label7lst = ['volcano','philippine','stay','city','support','week','live','active','alert','mount']#alert
-    label8lst = ['mayon','eruption','continue','kababayan','sunday','visit','recent','naitala','nature','posible','possible']#record
-    label9lst = ['lava','safe','flow','flee','photo','danger_zone','area','reach','smoke','video']#evacuate
+    return tplbl
 
-    
-    label1score = 0;label2score = 0;label3score = 0;label4score = 0;label5score = 0;label6score = 0;label7score = 0;label8score = 0;label9score = 0;
-    tpclabel = []
+def getlbllda(topics,status):
+    with open('files/lbllistldamal.lst','r') as filehandle:
+          stringfrm = filehandle.readline()
+     
+    lbllist = stringfrm.split(',')
+    num = 0
     labelscores = []
-    #print(topic,'\n\n')
-    for x in topic:
-        if(x in label1lst):
-            label1score = label1score + 1
-        if(x in label2lst):
-            label2score = label2score + 1
-        if(x in label3lst):
-            label3score = label3score + 1
-        if(x in label4lst):
-            label4score = label4score + 1
-        if(x in label5lst):
-            label5score = label5score + 1
-        if(x in label6lst):
-            label6score = label6score + 1
-        if(x in label7lst):
-            label7score = label7score + 1
-        if(x in label8lst):
-            label8score = label8score + 1
-        if(x in label9lst):
-            label9score = label9score + 1
-    highest = max(label1score,label2score,label3score,label4score,label5score,label6score,label7score,label8score,label9score)
-    #print(highest,'\n')
-    #print(label1score,label2score,label3score,label4score,label5score)
-    if(highest == 0):
-        labelscores.append('No Label')
-        labelscores.append('0')
-        tpclabel.append('No Label')
-        if(status==1):
-            return(tpclabel)
-        else:
-            return(labelscores)
-    if(highest == label1score):
-        labelscores.append('support')
-        labelscores.append(str(label1score))
-        tpclabel.append('support')
-    if(highest == label2score):
-        labelscores.append('lavaflow')
-        labelscores.append(str(label2score))
-        tpclabel.append('lavaflow')
-    if(highest == label3score):
-        labelscores.append('volunteer')
-        labelscores.append(str(label3score))
-        tpclabel.append('volunteer')
-    if(highest == label4score):
-        labelscores.append('mask')
-        labelscores.append(str(label4score))
-        tpclabel.append('mask')
-    if(highest == label5score):
-        labelscores.append('beneficiaries')
-        labelscores.append(str(label5score))
-        tpclabel.append('beneficiaries')
-    if(highest == label6score):
-        labelscores.append('linkages')
-        labelscores.append(str(label6score))
-        tpclabel.append('linkages')
-    if(highest == label7score):
-        labelscores.append('alert')
-        labelscores.append(str(label7score))
-        tpclabel.append('alert')
-    if(highest == label8score):
-        labelscores.append('record')
-        labelscores.append(str(label8score))
-        tpclabel.append('record')
-    if(highest == label9score):
-        labelscores.append('evacuate')
-        labelscores.append(str(label9score))
-        tpclabel.append('evacuate')
-    
-    if(status==1):
-        m=0
-        for q in tpclabel:
-            m = m  + 1
-        if(m>=2):
-            tpclabel = 'No Label'
-        return(tpclabel)
-    elif(status==2):
-        return(labelscores)
+    for x in (lbllist):
+        labelscores.append(int(0))
+        num = num + 1
 
-def getlblldamal(topic,status):
-    print('mal')
-    label1lst = ['resident','area','today','live','day','video','experience','affected','view','show']#real
-    label2lst = ['mayon','alert_level','evacuee','raise','remain','leave','team','learn','aalboroto','plume']#evacuate
-    label3lst = ['safe','stay','beautiful','time','danger_zone','disaster','evacuation','philippine','umaga','advise','activity','family','pray','flee','affect','bulkan','province','warn','active','move']#warning
-    label4lst = ['mayon','city','mocha','shelter','explosion','nature','family','beauty','pacific','video']#scenery
-    label5lst = ['abo','philippine','ashfall','displace','level','safety','usok','provide','local','makapal']#support
-    label6lst = ['mayon','ulat','school','alert','bless','dangerous','residente','cover','class','conduct']#advisory
-    label7lst = ['lava','ash','flow','spew','town','crater','week','use','kababayan','araw']#ashfall
-    label8lst = ['eruption','photo','lahar','volcanic','continue','hazardous','relief','authority','smoke','credit']#hazard
-    label9lst = ['volcano','philippine','people','evacuate','home','mount','support','threat','relief_effort','local_partner']#relief
+    for x in range(0,num):
+        score = 0
+        labelwrds = []
+        with open('files/malldalabel-'+lbllist[x]+'.lbl') as file:
+            wrds = file.readline()
+            labelwrds = wrds.split(',')
+        print('scoring')     
+        for y in topics:
+            if y in labelwrds:
+                score = score + 1
+            else:
+                continue
+            print('--',y)
+          
+          
+        labelscores[x] = score
+     
+    print('------------------------------')
+    print(lbllist)
+    print(labelscores)
+    counter = 0
+    maxscore = max(labelscores)
+    for x in labelscores:
+        if(x==maxscore):
+            counter = counter + 1
+        else:
+            continue
+    if(maxscore == 0 or counter > 1):
+        tplbl = 'No Label'
+    else:
+        indexnum = labelscores.index(maxscore)
+        tplbl = lbllist[indexnum]
+
+    return tplbl
+
+def getlblldamal(topics,status):
+    with open('files/lbllistlda.lst','r') as filehandle:
+          stringfrm = filehandle.readline()
+     
+    lbllist = stringfrm.split(',')
+    num = 0
     labelscores = []
-    label1score = 0;label2score = 0;label3score = 0;label4score = 0;label5score = 0;label6score = 0;label7score = 0;label8score = 0;label9score = 0;
-    tpclabel = []
-    #print(topic,'\n\n')
-    for x in topic:
-        if(x in label1lst):
-            label1score = label1score + 1
-        if(x in label2lst):
-            label2score = label2score + 1
-        if(x in label3lst):
-            label3score = label3score + 1
-        if(x in label4lst):
-            label4score = label4score + 1
-        if(x in label5lst):
-            label5score = label5score + 1
-        if(x in label6lst):
-            label6score = label6score + 1
-        if(x in label7lst):
-            label7score = label7score + 1
-        if(x in label8lst):
-            label8score = label8score + 1
-        if(x in label9lst):
-            label9score = label9score + 1
-    highest = max(label1score,label2score,label3score,label4score,label5score,label6score,label7score,label8score,label9score)
-    #print(highest,'\n')
-    #print(label1score,label2score,label3score,label4score,label5score)
-    if(highest == 0):
-        labelscores.append('No Label')
-        labelscores.append('0')
-        tpclabel.append('No Label')
-        if(status==1):
-            return(tpclabel)
-        else:
-            return(labelscores)
-    elif(highest == label1score):
-        labelscores.append('real')
-        labelscores.append(label1score)
-        tpclabel.append('real')
-    elif(highest == label2score):
-        labelscores.append('evacuate')
-        labelscores.append(label2score)
-        tpclabel.append('evacuate')
-    elif(highest == label3score):
-        labelscores.append('warning')
-        labelscores.append(label3score)
-        tpclabel.append('warning')
-    elif(highest == label4score):
-        labelscores.append('scenery')
-        labelscores.append(label4score)
-        tpclabel.append('scenery')
-    elif(highest == label5score):
-        labelscores.append('support')
-        labelscores.append(label5score)
-        tpclabel.append('support')
-    elif(highest == label6score):
-        labelscores.append('advisory')
-        labelscores.append(label6score)
-        tpclabel.append('advisory')
-    elif(highest == label7score):
-        labelscores.append('ashfall')
-        labelscores.append(label7score)
-        tpclabel.append('ashfall')
-    elif(highest == label8score):
-        labelscores.append('hazard')
-        labelscores.append(label8score)
-        tpclabel.append('hazard')
-    elif(highest == label9score):
-        labelscores.append('relief')
-        labelscores.append(label9score)
-        tpclabel.append('relief')
+    for x in (lbllist):
+        labelscores.append(int(0))
+        num = num + 1
 
-    if(status==1):
-        return(tpclabel)
-    elif(status==2):
-        return(labelscores)
+    for x in range(0,num):
+        score = 0
+        labelwrds = []
+        with open('files/ldalabel-'+lbllist[x]+'.lbl') as file:
+            wrds = file.readline()
+            labelwrds = wrds.split(',')
+        print('scoring')     
+        for y in topics:
+            if y in labelwrds:
+                score = score + 1
+            else:
+                continue
+            print('--',y)
+          
+          
+        labelscores[x] = score
+     
+    print('------------------------------')
+    print(lbllist)
+    print(labelscores)
+    counter = 0
+    maxscore = max(labelscores)
+    for x in labelscores:
+        if(x==maxscore):
+            counter = counter + 1
+        else:
+            continue
+    if(maxscore == 0 or counter > 1):
+        tplbl = 'No Label'
+    else:
+        indexnum = labelscores.index(maxscore)
+        tplbl = lbllist[indexnum]
+
+    return tplbl
 
 def ldaout(fl4):
     fl3 = open('ldaresult.res','r')
