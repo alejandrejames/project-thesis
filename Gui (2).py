@@ -90,7 +90,7 @@ collect_entry_5.grid(row=7)
 now = datetime.datetime.now()
 collect_entry_5.insert(END,'collecteddata'+str(now.strftime("%Y%m%d")))
 collect_entry_6.grid(row=9, pady=15)
-collect_progressbar.grid(row=10, sticky=W)
+#collect_progressbar.grid(row=10, sticky=W)
 
 #collect_entry_1_ttp = ttp.CreateToolTip(collect_entry_1, "Query keyword found in tweets")
 #collect_entry_2_ttp = ttp.CreateToolTip(collect_entry_2, "Max number of tweets to be gathered")
@@ -169,7 +169,7 @@ dpp_entry_3.grid(row=3,sticky=W,padx=490)
 dpp_scrollbar.grid(row=3,sticky=W,padx=950,ipady=100)
 
 dpp_entry_4.grid(row=5, sticky=W)
-cleaning_progressbar.grid(row=6,sticky=W)
+#cleaning_progressbar.grid(row=6,sticky=W)
 
 
 
@@ -195,6 +195,7 @@ tpcmdl_entry_4.insert(END, 'Ready')
 tpcmdl_entry_4.insert(END, '....\n')
 tpcmdl_entry_4.insert(END, '=========================================================================================================================================')
 tpcmdl_entry_4.config(state=DISABLED)
+tpcmdl_lblbutton = tpcmdl_button = Button(page2, text ="Label List",command = lambda: viewalllabels())
 tpcmdl_progressbar = Progressbar(page2, orient=HORIZONTAL,length=970,  mode='indeterminate')
 
 tpcmdl_label_4 = Label(page2, text = "LDA Parameters",pady=10, font= "Times 15 bold")
@@ -241,6 +242,7 @@ nmfparam_entry_5.insert(END,int(random.randint(1,101)))
 tpcmdl_label_1.grid(row=0, sticky=W)
 tpcmdl_label_3.grid(row=1,sticky=W)
 tpcmdl_entry_1.grid(row=1,sticky=W,padx=90)
+tpcmdl_lblbutton.grid(row=1,sticky=W,padx=900)
 
 tpcmdl_label_4.grid(row=2,sticky=W)
 ldaparam_label_1.grid(row=3,sticky=W)
@@ -270,7 +272,7 @@ nmfparam_entry_4.grid(row=5,sticky=W,padx=615)
 
 tpcmdl_button1.grid(row=8,sticky=W,padx=340)
 tpcmdl_entry_4.grid(row=9, sticky=W,pady=8)
-tpcmdl_progressbar.grid(row=10,sticky=W)
+#tpcmdl_progressbar.grid(row=10,sticky=W)
 
 
 #tpcmdl_entry_1_ttp = ttp.CreateToolTip(tpcmdl_entry_1, "File name of the cleaned data set")
@@ -612,11 +614,12 @@ def dataclct2(query,num,startd,endd):
             text1.grid(row=4,sticky=W,padx=10,pady=5)
             scrollbar.grid(row=4,sticky=W,ipady=150,padx=1178)
             scrollbar.config(command = text1.yview)
-            
+
+            csvname = collect_entry_5.get()+'.csv'
             data = pd.read_csv('orginaldata.csv', 
             error_bad_lines=False)
             # We only need the Headlines text column from the data
-            data_text = data[['data']]
+            data_text = data[['data','username;date;retweets;favorites;text;geo;mentions;hashtags;id;permalink']]
             data_text = data_text.astype('str');
             data = data_text.data.values.tolist()
             numb=0
@@ -813,6 +816,92 @@ def viewstopwrds(main,stats):
         with open('additional_stop_words.asw', 'r') as filehandle:
             stpwrds_extension = filehandle.readline()
         dpp_entry_3.insert(END,stpwrds_extension)
+############################################################################
+#
+#Stopwords Viewing
+def viewalllabels():
+    def viewwords(lblname):
+        window_textentry.delete("1.0", tk.END)
+        if('LDA(Mallet)' in lblname):
+            lblname = lblname.replace(' - LDA(Mallet)','')
+            flname = 'malldalabel'+'-'+lblname+'.lbl'
+            with open('files/'+flname,'r') as flhandle:
+                labelwords = flhandle.read()
+            window_textentry.insert(END,labelwords)
+        elif('NMF' in lblname):
+            lblname = lblname.replace(' - NMF','')
+            flname = 'nmflabel'+'-'+lblname+'.lbl'
+            with open('files/'+flname,'r') as flhandle:
+                labelwords = flhandle.read()
+            window_textentry.insert(END,labelwords)
+        else:
+            lblname = lblname.replace(' - LDA','')
+            flname = 'ldalabel'+'-'+lblname+'.lbl'
+            with open('files/'+flname,'r') as flhandle:
+                labelwords = flhandle.read()
+            window_textentry.insert(END,labelwords)
+    def updatewords(lblname):
+        if('LDA(Mallet)' in lblname):
+            lblname = lblname.replace(' - LDA(Mallet)','')
+            flname = 'malldalabel'+'-'+lblname+'.lbl'
+            with open('files/'+flname,'r') as flhandle:
+                labelwords = flhandle.read()
+            window_textentry.insert(END,labelwords)
+        elif('NMF' in lblname):
+            lblname = lblname.replace(' - NMF','')
+            flname = 'nmflabel'+'-'+lblname+'.lbl'
+            with open('files/'+flname,'r') as flhandle:
+                labelwords = flhandle.read()
+            window_textentry.insert(END,labelwords)
+        else:
+            lblname = lblname.replace(' - LDA','')
+            flname = 'ldalabel'+'-'+lblname+'.lbl'
+            with open('files/'+flname,'w') as flhandle:
+                flhandle.write(window_textentry.get("1.0",END))
+                print(window_textentry.get("1.0",END))
+                window_textentry.delete("1.0", tk.END)
+    window = tk.Toplevel(main)
+    window.title('List of All Labels')
+    window.minsize(300,500)
+    window.maxsize(300,500)
 
+    window_label = Label(window,text = 'Add a new Label')
+    window_entry = Entry(window)
+    window_button = Button(window,text = 'Add')
+    window_label2 = Label(window,text = 'View Label')
+    window_opmenu_variable = StringVar(window)
+    window_opmenu_variable.set("---------")
+    alllabels = []
+    with open('files/lbllistlda.lst','r') as fileh:
+        lbllistlda = fileh.read()
+    lbllistlda = lbllistlda.split(',')
+    for x in lbllistlda:
+        alllabels.append(x+' - LDA')
 
+    with open('files/lbllistnmf.lst','r') as fileh:
+        lbllistnmf = fileh.read()
+    lbllistnmf = lbllistnmf.split(',')
+    for x in lbllistnmf:
+        alllabels.append(x+' - NMF')
+
+    with open('files/lbllistldamal.lst','r') as fileh:
+        lbllistldamal = fileh.read()
+    lbllistldamal = lbllistldamal.split(',')
+    for x in lbllistldamal:
+        alllabels.append(x+' - LDA(Mallet)')
+    window_opmenu = OptionMenu(window, window_opmenu_variable, *alllabels)
+    window_button2 = Button(window,text = 'View Words',command= lambda:viewwords(window_opmenu_variable.get()))
+    window_textentry = Text(window,height=17,width=32)
+    window_button3 = Button(window,text = 'Update label',command= lambda: updatewords(window_opmenu_variable.get()))
+    
+    window_label.pack()
+    window_entry.pack()
+    window_button.pack()
+    window_label2.pack()
+    window_opmenu.pack()
+    window_button2.pack()
+    window_textentry.pack()
+    window_button3.pack()
+
+    
 main.mainloop()
