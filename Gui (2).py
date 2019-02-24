@@ -132,7 +132,8 @@ dpp_entry_1.insert(END, 'orginaldata.csv')
 dpp_entry_2 = Entry(dpp_frame_1,width="25",bg="blue",fg="white",font = "Times 15 bold")
 dpp_entry_2.insert(END, 'cleaneddata')
 dpp_scrollbar = Scrollbar(page3)
-dpp_entry_3 = Text(page3,width=75,height=15,font = "Times 10",yscrollcommand = dpp_scrollbar.set)
+dpp_entry_3 = usmdls.CustomText(page3,width=75,height=15,font = "Times 10",yscrollcommand = dpp_scrollbar.set)
+dpp_entry_3.tag_configure("yellow", background="#FFFF00",foreground="#000000")
 dpp_entry_4 = Text(page3,width=159,height=5,font = "Times 10")
 dpp_entry_4.insert(END, 'Ready')
 dpp_entry_4.insert(END, '....\n')
@@ -146,12 +147,15 @@ dpp_button_2 = Button(page3, text ="User Defined Stopwords",fg="white", font ="T
 dpp_button_3 = Button(dpp_frame_1, text ="Clean Data  File",fg="white", font ="Times 15 bold", borderwidth=3, relief ="raised",bg ="blue", padx=30, command=lambda: datacleaning2(main,dpp_entry_1.get()))
 dpp_button_4 = Button(page3, text ="Tagalog Stopwords",fg="white", font ="Times 12 bold", borderwidth=2, relief ="raised",bg ="blue", command=lambda: viewstopwrds(main,3))
 
+dpp_button_import = Button(page3,text="Import a Dataset",command= lambda:importdataset())
+
 dpp_label_1.grid(row=0, sticky=W)
 
 dpp_frame_1.grid(row=3, sticky=W)
 dpp_label_2.grid(row=0,sticky=W)
 dpp_entry_1.grid(row=0,sticky=W,padx=130)
 dpp_label_3.grid(row=1,sticky=W)
+dpp_button_import.grid(row=2,sticky=W,padx=20)
 dpp_checkbox_1.grid(row=2,sticky=W)
 dpp_checkbox_2.grid(row=2,sticky=W,padx=110)
 dpp_checkbox_3.grid(row=3,sticky=W)
@@ -574,6 +578,7 @@ def dataclct2(query,num,startd,endd):
         window.destroy()
     def openfl():
         os.system("start EXCEL.EXE "+collect_entry_5.get()+".csv")
+        #os.system("start EXCEL.EXE "+"orginaldata.csv")
     def collection(query,num,startd,endd): 
         usmdls.collectdata(query,num,startd,endd,collect_entry_5.get())
     def process_queue(self):
@@ -616,8 +621,8 @@ def dataclct2(query,num,startd,endd):
             scrollbar.config(command = text1.yview)
 
             csvname = collect_entry_5.get()+'.csv'
-            data = pd.read_csv('orginaldata.csv', 
-            error_bad_lines=False)
+            #data = pd.read_csv('orginaldata.csv', error_bad_lines=False)
+            data = pd.read_csv(csvname, error_bad_lines=False)
             # We only need the Headlines text column from the data
             data_text = data[['data','username;date;retweets;favorites;text;geo;mentions;hashtags;id;permalink']]
             data_text = data_text.astype('str');
@@ -678,7 +683,7 @@ def genresults():
 #Data Cleaning Ver.2
 def datacleaning2(main,name):
     def openfl(window):
-        os.system("start notepad.exe "+dpp_entry_2.get()+".cds")
+        os.system("start EXCEL.EXE "+"cleaneddataset-readable"+".csv")
         window.destroy()
     def cleaningdata(name):
         cleaned = t2.cleaning(name,emailvar.get(),linkvar.get(),speccharvar.get(),stpwrdvar.get(),dpp_entry_4)
@@ -788,37 +793,59 @@ def viewstopwrds(main,stats):
             dpp_entry_4.insert(END,'Stopwords Updated\n')
             dpp_entry_4.see(tk.END)
             dpp_entry_4.config(state='disabled')
-        
+
         dpp_button_5.grid_remove()
+        dpp_entrysearch.grid_remove()
+        dpp_button_6.grid_remove()
         dpp_button_1.grid(row=2,sticky=W,padx=500)
         dpp_button_2.grid(row=2,sticky=W,padx=640)
         dpp_button_4.grid(row=2,sticky=W,padx=820)
         dpp_entry_3.delete("1.0", tk.END)
-
+    def findtext(txtsrch):
+        def dothisfrst():
+            dpp_entry_3.tag_add("here", "1.0", END)
+            dpp_entry_3.tag_config("here",foreground="black",background="white")
+            dpp_entry_3.tag_remove("here", "1.0", END)
+        dothisfrst()
+        dpp_entry_3.tag_configure("yellow", background="#FFFF00",foreground="#000000")
+        dpp_entry_3.highlight_pattern(txtsrch,"yellow")
     dpp_button_5 = Button(page3, text ="Update Stopwords",fg="white", font ="Times 12 bold", borderwidth=2, relief ="raised",bg ="blue", command=lambda: updatestpwrds(dpp_entry_3.get("1.0",END),stats))
+    dpp_entrysearch = Entry(page3)
+    dpp_button_6 = Button(page3,text="Search Text",command= lambda:findtext(dpp_entrysearch.get()))
     dpp_button_1.grid_remove()
     dpp_button_2.grid_remove()
     dpp_button_4.grid_remove()
-    dpp_button_5.grid(row=2,sticky=W,padx=640)
-    
+    dpp_button_5.grid(row=2,sticky=W,padx=800)
+    dpp_entrysearch.grid(row=2,sticky=W,padx=500,ipady=5,ipadx=20)
+    dpp_button_6.grid(row=2,sticky=W,padx=670,ipady=5)
+
     if(stats == 1):
+        stpwrds_extension = []
         dpp_entry_3.delete("1.0", tk.END)
         with open('additional_stop_words_mallet.asw', 'r') as filehandle:
-            stpwrds_extension = filehandle.readline()
-        dpp_entry_3.insert(END,stpwrds_extension)
+            xy = filehandle.read()
+            stpwrds_extension.append(xy)
+        for x in stpwrds_extension:
+            dpp_entry_3.insert(END,x+'\n')
     elif(stats==3):
+        stpwrds_extension = []
         dpp_entry_3.delete("1.0", tk.END)
         with open('additional_stop_words_tagalog.asw', 'r') as filehandle:
-            stpwrds_extension = filehandle.readline()
-        dpp_entry_3.insert(END,stpwrds_extension)
+            xy = filehandle.read()
+            stpwrds_extension.append(xy)
+        for x in stpwrds_extension:
+            dpp_entry_3.insert(END,x+'\n')
     else:
+        stpwrds_extension = []
         dpp_entry_3.delete("1.0", tk.END)
         with open('additional_stop_words.asw', 'r') as filehandle:
-            stpwrds_extension = filehandle.readline()
-        dpp_entry_3.insert(END,stpwrds_extension)
+            xy = filehandle.read()
+            stpwrds_extension.append(xy)
+        for x in stpwrds_extension:
+            dpp_entry_3.insert(END,x+'\n')
 ############################################################################
 #
-#Stopwords Viewing
+#Edit labeling
 def viewalllabels():
     def viewwords(lblname):
         window_textentry.delete("1.0", tk.END)
@@ -858,14 +885,14 @@ def viewalllabels():
             flname = 'ldalabel'+'-'+lblname+'.lbl'
             with open('files/'+flname,'w') as flhandle:
                 flhandle.write(window_textentry.get("1.0",END))
-                print(window_textentry.get("1.0",END))
+                #print(window_textentry.get("1.0",END))
                 window_textentry.delete("1.0", tk.END)
     window = tk.Toplevel(main)
     window.title('List of All Labels')
     window.minsize(300,500)
     window.maxsize(300,500)
 
-    window_label = Label(window,text = 'Add a new Label')
+    window_label = Label(window,text = 'Edit label words')
     window_entry = Entry(window)
     window_button = Button(window,text = 'Add')
     window_label2 = Label(window,text = 'View Label')
@@ -895,13 +922,64 @@ def viewalllabels():
     window_button3 = Button(window,text = 'Update label',command= lambda: updatewords(window_opmenu_variable.get()))
     
     window_label.pack()
-    window_entry.pack()
-    window_button.pack()
+    #window_entry.pack()
+    #window_button.pack()
     window_label2.pack()
     window_opmenu.pack()
     window_button2.pack()
     window_textentry.pack()
     window_button3.pack()
+############################################################################
+#
+#Import another csv file
+def importdataset():
+    def openimport(name):
+        os.system("start EXCEL.EXE "+name)
+    def importdtast(impfile,colname,expfile):
+        expfile = expfile + '.csv'
+        window_label6 = Label(window,text="Data Imported saved as "+expfile)
+        window_button2 = Button(window,text="Open in Excel",command=lambda:openimport(expfile))
+        
+        data = pd.read_csv(impfile, error_bad_lines=False)
+        # We only need the Headlines text column from the data
+        data_text = data[[colname]]
+        data[['data']] = data[[colname]]
+        data_text = data[['data']]
+        data_text = data_text.astype('str');
+        data = data_text.data.values.tolist()
+        with open(expfile,'w') as filehandle:
+            filehandle.write('data\n')
+            for x in data:
+                filehandle.write(str((x).encode("utf-8"))+"\n")
+        window_label6.grid(row=5,sticky=W)
+        window_button2.grid(row=5,sticky=W,padx=210)
+    
+    window = tk.Toplevel(main)
+    window.title('Import another dataset')
+    window.minsize(350,140)
+    window.maxsize(350,140)
 
+    window_label = Label(window,text="Import a csv file")
+    window_label2 = Label(window,text="Filename of csv file to be imported")
+    window_label3 = Label(window,text="Column name of the data to be imported")
+    window_label4 = Label(window,text="Filename of the imported csv file")
+    window_label5 = Label(window,text=".csv")
+    
+    window_entry = Entry(window)
+    window_entry2 = Entry(window)
+    window_entry3 = Entry(window)
+    window_entry3.insert(END,'importeddataset')
+
+    window_button = Button(window,text="Import file",command=lambda:importdtast(window_entry.get(),window_entry2.get(),window_entry3.get()))
+
+    window_label.grid(row=0,sticky=W,padx=120)
+    window_label2.grid(row=1,sticky=W)
+    window_label3.grid(row=2,sticky=W)
+    window_label4.grid(row=3,sticky=W)
+    window_label5.grid(row=3,sticky=W,padx=300)
+    window_entry.grid(row=1,sticky=W,padx=190)
+    window_entry2.grid(row=2,sticky=W,padx=230)
+    window_entry3.grid(row=3,sticky=W,padx=180)
+    window_button.grid(row=4,sticky=W,padx=120)
     
 main.mainloop()

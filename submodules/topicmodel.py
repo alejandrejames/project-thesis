@@ -34,21 +34,28 @@ import os
 def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
     from nltk.corpus import stopwords
     stop_words = stopwords.words('english')
+    stpwrds_extension = ''
     with open('additional_stop_words.asw', 'r') as filehandle:
-        stpwrds_extension = []
-        string1 = filehandle.read().rstrip('\n')
-        stpwrds_extension = string1.split(',')
-        stop_words.extend(stpwrds_extension)
+        string1 = filehandle.read()
+        stpwrds_extension = stpwrds_extension+','+string1
+    stpwrds_extension = stpwrds_extension.split('\n')
+    stop_words.extend(stpwrds_extension)
+    #print(stpwrds_extension,'\n')
+    stpwrds_extension2 = ''
     with open('additional_stop_words_tagalog.asw', 'r') as filehandle:
-        stpwrds_extension2 = []
-        string1 = filehandle.read().rstrip('\n')
-        stpwrds_extension2 = string1.split(',')
+        string1 = filehandle.read()
+        stpwrds_extension2 = stpwrds_extension2+','+string1
+    stpwrds_extension2 = stpwrds_extension2.split('\n')
     stop_words.extend(stpwrds_extension2)
+    #print(stpwrds_extension2,'\n')
+    stpwrds_extension3 = ''
     with open('additional_stop_words_mallet.asw', 'r') as filehandle:
-        stpwrds_extension3 = []
-        string1 = filehandle.read().rstrip('\n')
-        stpwrds_extension3 = string1.split(',')
-        stop_words.extend(stpwrds_extension3)
+        string1 = filehandle.read()
+        stpwrds_extension3 = stpwrds_extension3+','+string1
+    #print(stpwrds_extension,'\n')
+    stpwrds_extension3 = stpwrds_extension3.split('\n')
+    stop_words.extend(stpwrds_extension3)
+    #print(stop_words)
     dpp_entry_4.insert(tk.END,'Stopwords Loaded\n')
     dpp_entry_4.see(tk.END)
     dpp_entry_4.insert(tk.END,'Cleaning...\n')
@@ -139,9 +146,19 @@ def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
     ##
     
     data_lemmatized2 = remove_stopwords(data_lemmatized)
-    with open('clean3.txt', 'w') as filehandle:
+    with open('clean.txt', 'w') as filehandle:
         line = ' '.join(str(x) for x in data_lemmatized2)
         filehandle.write(str((line + '\n').encode("utf-8")))
+    with open('clean.txt', 'r') as filehandle:
+        string = filehandle.read()
+    lista = string.split('] [')
+    with open('cleaneddataset-readable.csv', 'w') as filehandle:
+        filehandle.write('Cleaned Words')
+        filehandle.write('\n')
+        for x in lista:
+            filehandle.write(x)
+            filehandle.write('\n')
+    
     dpp_entry_4.insert(tk.END,'Completed\n')
     dpp_entry_4.see(tk.END)
     return data_lemmatized2

@@ -27,103 +27,18 @@ from time import sleep
 import matplotlib.pyplot as plt
 import random
 from wordcloud import WordCloud, STOPWORDS
-import matplotlib.pyplot as plt; plt.rcdefaults()
-import numpy as np
-import matplotlib.pyplot as plt
+import tkinter as tk
+import os
 
-#topics = ['mayon','volcano','eruption','philippine','people','alert_level','ash','good','relief','flee',]
-topics = ['evacuate','displace','home','resident','smoke','authority','raise','beautiful','permanent','increase']
+data = pd.read_csv('sample.csv', error_bad_lines=False)
+# We only need the Headlines text column from the data
+data_text = data[['tweets']]
+data[['data']] = data[['tweets']]
+data_text = data[['data']]
+data_text = data_text.astype('str');
+data = data_text.data.values.tolist()
 
-def getlbllda(topics):
-     with open('files/lbllistlda.lst','r') as filehandle:
-          stringfrm = filehandle.readline()
-     
-     lbllist = stringfrm.split(',')
-     num = 0
-     labelscores = []
-     for x in (lbllist):
-          labelscores.append(int(0))
-          num = num + 1
-
-     for x in range(0,num):
-          score = 0
-          labelwrds = []
-          with open('files/ldalabel-'+lbllist[x]+'.lbl') as file:
-               wrds = file.readline()
-               labelwrds = wrds.split(',')
-          print('scoring')     
-          for y in topics:
-               if y in labelwrds:
-                   score = score + 1
-               else:
-                    continue
-               print('--',y)
-          
-          
-          labelscores[x] = score
-     
-     print('------------------------------')
-     print(lbllist)
-     print(labelscores)
-     counter = 0
-     maxscore = max(labelscores)
-     for x in labelscores:
-          if(x==maxscore):
-               counter = counter + 1
-          else:
-               continue
-     if(maxscore == 0 or counter > 1):
-          tplbl = 'No Label'
-     else:
-          indexnum = labelscores.index(maxscore)
-          tplbl = lbllist[indexnum]
-
-     return tplbl
-
-def getlblnmf(topics):
-     with open('files/lbllistnmf.lst','r') as filehandle:
-          stringfrm = filehandle.readline()
-     
-     lbllist = stringfrm.split(',')
-     num = 0
-     labelscores = []
-     for x in (lbllist):
-          labelscores.append(int(0))
-          num = num + 1
-
-     for x in range(0,num):
-          score = 0
-          labelwrds = []
-          with open('files/nmflabel-'+lbllist[x]+'.lbl') as file:
-               wrds = file.readline()
-               labelwrds = wrds.split(',')
-          print('scoring')     
-          for y in topics:
-               if y in labelwrds:
-                   score = score + 1
-               else:
-                    continue
-               print('--',y)
-          
-          
-          labelscores[x] = score
-     
-     print('------------------------------')
-     print(lbllist)
-     print(labelscores)
-     counter = 0
-     maxscore = max(labelscores)
-     for x in labelscores:
-          if(x==maxscore):
-               counter = counter + 1
-          else:
-               continue
-     if(maxscore == 0 or counter > 1):
-          tplbl = 'No Label'
-     else:
-          indexnum = labelscores.index(maxscore)
-          tplbl = lbllist[indexnum]
-
-     return tplbl
-
-print(getlblnmf(topics))
+with open('exported.csv','w') as filehandle:
+    filehandle.write('data\n')
+    for x in data:
+        filehandle.write(str((x).encode("utf-8"))+"\n")

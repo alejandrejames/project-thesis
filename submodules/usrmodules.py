@@ -33,6 +33,9 @@ import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
+from tkinter import *
+from tkinter import ttk
+import tkinter as tk
 
 def collectdata(query,num,startd,endd,flname):
     collect = 'python Exporter.py --querysearch "'
@@ -57,20 +60,20 @@ def getlblnmf(topics,status):
         with open('files/nmflabel-'+lbllist[x]+'.lbl') as file:
             wrds = file.readline()
             labelwrds = wrds.split(',')
-        print('scoring')     
+        #print('scoring')     
         for y in topics:
             if y in labelwrds:
                 score = score + 1
             else:
                 continue
-            print('--',y)
+            #print('--',y)
           
           
         labelscores[x] = score
      
-    print('------------------------------')
-    print(lbllist)
-    print(labelscores)
+    #print('------------------------------')
+    #print(lbllist)
+    #print(labelscores)
     counter = 0
     maxscore = max(labelscores)
     for x in labelscores:
@@ -103,20 +106,20 @@ def getlbllda(topics,status):
         with open('files/malldalabel-'+lbllist[x]+'.lbl') as file:
             wrds = file.readline()
             labelwrds = wrds.split(',')
-        print('scoring')     
+        #print('scoring')     
         for y in topics:
             if y in labelwrds:
                 score = score + 1
             else:
                 continue
-            print('--',y)
+            #print('--',y)
           
           
         labelscores[x] = score
      
-    print('------------------------------')
-    print(lbllist)
-    print(labelscores)
+    #print('------------------------------')
+    #print(lbllist)
+    #print(labelscores)
     counter = 0
     maxscore = max(labelscores)
     for x in labelscores:
@@ -149,20 +152,20 @@ def getlblldamal(topics,status):
         with open('files/ldalabel-'+lbllist[x]+'.lbl') as file:
             wrds = file.readline()
             labelwrds = wrds.split(',')
-        print('scoring')     
+        #print('scoring')     
         for y in topics:
             if y in labelwrds:
                 score = score + 1
             else:
                 continue
-            print('--',y)
+            #print('--',y)
           
           
         labelscores[x] = score
      
-    print('------------------------------')
-    print(lbllist)
-    print(labelscores)
+    #print('------------------------------')
+    #print(lbllist)
+    #print(labelscores)
     counter = 0
     maxscore = max(labelscores)
     for x in labelscores:
@@ -241,7 +244,7 @@ def ldafreqbar():
         lda_model = pickle.load(filehandle)
     stringfrm = ""
     thelist = []
-    print(lda_model.strip('+'))
+    #print(lda_model.strip('+'))
     for x in lda_model:
         if(x == '*'):
             thelist.append(stringfrm)
@@ -308,7 +311,7 @@ def nmffreqbar():
         lda_model = pickle.load(filehandle)
     stringfrm = ""
     thelist = []
-    print(lda_model)
+    #print(lda_model)
     for x in lda_model:
         if(x == ','):
             thelist.append(stringfrm)
@@ -344,7 +347,7 @@ def nmffreqbar():
     thelist2 = []
     thelist3 = []
     for x in thelist:
-        print(x)
+        #print(x)
         num = 0
         if(x in thelist2):
             continue
@@ -369,3 +372,42 @@ def nmffreqbar():
     plt.title('Words')
     plt.savefig('bar', dpi=350)
     plt.show()
+
+class CustomText(tk.Text):
+    '''A text widget with a new method, highlight_pattern()
+
+    example:
+
+    text = CustomText()
+    text.tag_configure("red", foreground="#ff0000")
+    text.highlight_pattern("this should be red", "red")
+
+    The highlight_pattern method is a simplified python
+    version of the tcl code at http://wiki.tcl.tk/3246
+    '''
+    def __init__(self, *args, **kwargs):
+        tk.Text.__init__(self, *args, **kwargs)
+
+    def highlight_pattern(self, pattern, tag, start="1.0", end="end",
+                          regexp=False):
+        '''Apply the given tag to all text that matches the given pattern
+
+        If 'regexp' is set to True, pattern will be treated as a regular
+        expression according to Tcl's regular expression syntax.
+        '''
+
+        start = self.index(start)
+        end = self.index(end)
+        self.mark_set("matchStart", start)
+        self.mark_set("matchEnd", start)
+        self.mark_set("searchLimit", end)
+
+        count = tk.IntVar()
+        while True:
+            index = self.search(pattern, "matchEnd","searchLimit",
+                                count=count, regexp=regexp)
+            if index == "": break
+            if count.get() == 0: break # degenerate pattern which matches zero-length strings
+            self.mark_set("matchStart", index)
+            self.mark_set("matchEnd", "%s+%sc" % (index, count.get()))
+            self.tag_add(tag, "matchStart", "matchEnd")
