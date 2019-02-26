@@ -43,7 +43,7 @@ def collectdata(query,num,startd,endd,flname):
     collect = collect + '" --since '+startd+' --until '+endd+' --maxtweets '+num+' --output '+flname+'.csv'
     subprocess.call(collect, shell=True)
 
-def getlblnmf(topics,status):
+def getlblnmf(topics,status,lbling):
     with open('files/lbllistnmf.lst','r') as filehandle:
           stringfrm = filehandle.readline()
      
@@ -75,21 +75,31 @@ def getlblnmf(topics,status):
     #print(lbllist)
     #print(labelscores)
     counter = 0
+    lblindx = []
+    tplbl = []
     maxscore = max(labelscores)
     for x in labelscores:
         if(x==maxscore):
             counter = counter + 1
         else:
             continue
-    if(maxscore == 0 or counter > 1):
+    if(maxscore == 0):
         tplbl = 'No Label'
+    elif(counter > 1):
+        for x in range(0,len(labelscores)):
+            if(labelscores[x]==maxscore):
+                lblindx.append(x)
+        for x in lblindx:
+            tplbl.append(lbllist[x])
+        if(lbling==0):
+            tplbl = 'No Label'
     else:
         indexnum = labelscores.index(maxscore)
         tplbl = lbllist[indexnum]
 
     return tplbl
 
-def getlbllda(topics,status):
+def getlbllda(topics,status,lbling):
     with open('files/lbllistldamal.lst','r') as filehandle:
           stringfrm = filehandle.readline()
      
@@ -121,21 +131,31 @@ def getlbllda(topics,status):
     #print(lbllist)
     #print(labelscores)
     counter = 0
+    lblindx = []
+    tplbl = []
     maxscore = max(labelscores)
     for x in labelscores:
         if(x==maxscore):
             counter = counter + 1
         else:
             continue
-    if(maxscore == 0 or counter > 1):
+    if(maxscore == 0):
         tplbl = 'No Label'
+    elif(counter > 1):
+        for x in range(0,len(labelscores)):
+            if(labelscores[x]==maxscore):
+                lblindx.append(x)
+        for x in lblindx:
+            tplbl.append(lbllist[x])
+        if(lbling==0):
+            tplbl = 'No Label'
     else:
         indexnum = labelscores.index(maxscore)
         tplbl = lbllist[indexnum]
 
     return tplbl
 
-def getlblldamal(topics,status):
+def getlblldamal(topics,status,lbling):
     with open('files/lbllistlda.lst','r') as filehandle:
           stringfrm = filehandle.readline()
      
@@ -167,14 +187,24 @@ def getlblldamal(topics,status):
     #print(lbllist)
     #print(labelscores)
     counter = 0
+    lblindx = []
+    tplbl = []
     maxscore = max(labelscores)
     for x in labelscores:
         if(x==maxscore):
             counter = counter + 1
         else:
             continue
-    if(maxscore == 0 or counter > 1):
+    if(maxscore == 0):
         tplbl = 'No Label'
+    elif(counter > 1):
+        for x in range(0,len(labelscores)):
+            if(labelscores[x]==maxscore):
+                lblindx.append(x)
+        for x in lblindx:
+            tplbl.append(lbllist[x])
+        if(lbling==0):
+            tplbl = 'No Label'
     else:
         indexnum = labelscores.index(maxscore)
         tplbl = lbllist[indexnum]

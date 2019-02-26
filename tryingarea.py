@@ -30,15 +30,7 @@ from wordcloud import WordCloud, STOPWORDS
 import tkinter as tk
 import os
 
-data = pd.read_csv('sample.csv', error_bad_lines=False)
-# We only need the Headlines text column from the data
-data_text = data[['tweets']]
-data[['data']] = data[['tweets']]
-data_text = data[['data']]
-data_text = data_text.astype('str');
-data = data_text.data.values.tolist()
 
-with open('exported.csv','w') as filehandle:
-    filehandle.write('data\n')
-    for x in data:
-        filehandle.write(str((x).encode("utf-8"))+"\n")
+lista = [5,5,7,8,9,8]
+
+print(lista.index(8))
