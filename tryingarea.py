@@ -29,8 +29,8 @@ import random
 from wordcloud import WordCloud, STOPWORDS
 import tkinter as tk
 import os
+import time
 
-
-lista = [5,5,7,8,9,8]
-
-print(lista.index(8))
+print("a")
+sleep(10)
+print("b")
