@@ -84,7 +84,12 @@ def getlblnmf(topics,status,lbling):
         else:
             continue
     if(maxscore == 0):
-        tplbl = 'No Label'
+        if(lbling==0):
+            tplbl = "No Label"
+        elif(lbling==2):
+            tplbl = ""
+        else:
+            tplbl = "No Label"
     elif(counter > 1):
         for x in range(0,len(labelscores)):
             if(labelscores[x]==maxscore):
@@ -92,10 +97,20 @@ def getlblnmf(topics,status,lbling):
         for x in lblindx:
             tplbl.append(lbllist[x])
         if(lbling==0):
-            tplbl = 'No Label'
+            qwe=3
+        elif(lbling==2):
+            tplbl = ""
+        else:
+            qwe=3
     else:
-        indexnum = labelscores.index(maxscore)
-        tplbl = lbllist[indexnum]
+        if(lbling==0):
+            indexnum = labelscores.index(maxscore)
+            tplbl = lbllist[indexnum]
+        elif(lbling==2):
+            tplbl = ""
+        else:
+            indexnum = labelscores.index(maxscore)
+            tplbl = lbllist[indexnum]
 
     return tplbl
 
@@ -140,7 +155,12 @@ def getlbllda(topics,status,lbling):
         else:
             continue
     if(maxscore == 0):
-        tplbl = 'No Label'
+        if(lbling==0):
+            tplbl = 'No Label'
+        elif(lbling==2):
+            tplbl = ""
+        else:
+            tplbl = 'No Label'
     elif(counter > 1):
         for x in range(0,len(labelscores)):
             if(labelscores[x]==maxscore):
@@ -148,10 +168,20 @@ def getlbllda(topics,status,lbling):
         for x in lblindx:
             tplbl.append(lbllist[x])
         if(lbling==0):
-            tplbl = 'No Label'
+            tplbl = "No Label"
+        elif(lbling==2):
+            tplbl = ""
+        else:
+            qwe = 0
     else:
-        indexnum = labelscores.index(maxscore)
-        tplbl = lbllist[indexnum]
+        if(lbling==0):
+            indexnum = labelscores.index(maxscore)
+            tplbl = lbllist[indexnum]
+        elif(lbling==2):
+            tplbl = ""
+        else:
+            indexnum = labelscores.index(maxscore)
+            tplbl = lbllist[indexnum]
 
     return tplbl
 
@@ -196,7 +226,12 @@ def getlblldamal(topics,status,lbling):
         else:
             continue
     if(maxscore == 0):
-        tplbl = 'No Label'
+        if(lbling==0):
+            tplbl = 'No Label'
+        elif(lbling==2):
+            tplbl = ""
+        else:
+            tplbl = 'No Label'
     elif(counter > 1):
         for x in range(0,len(labelscores)):
             if(labelscores[x]==maxscore):
@@ -205,9 +240,19 @@ def getlblldamal(topics,status,lbling):
             tplbl.append(lbllist[x])
         if(lbling==0):
             tplbl = 'No Label'
+        elif(lbling==2):
+            tplbl = ""
+        else:
+            qwe = 0
     else:
-        indexnum = labelscores.index(maxscore)
-        tplbl = lbllist[indexnum]
+        if(lbling==0):
+            indexnum = labelscores.index(maxscore)
+            tplbl = lbllist[indexnum]
+        elif(lbling==2):
+            tplbl = ""
+        else:
+            indexnum = labelscores.index(maxscore)
+            tplbl = lbllist[indexnum]
 
     return tplbl
 

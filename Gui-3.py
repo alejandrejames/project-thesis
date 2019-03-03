@@ -21,6 +21,8 @@ import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from tkinter import filedialog as fd
+
 warnings.filterwarnings(action="ignore",category=UserWarning,module='gensim')
 
 main = Tk()
@@ -149,12 +151,14 @@ dpp_button_3 = Button(dpp_frame_1, text ="Clean Data  File",fg="white", font ="A
 dpp_button_4 = Button(page3, text ="Tagalog Stopwords",fg="white", font ="Arial 10 bold", borderwidth=2, relief ="raised",bg="#173F5F", command=lambda: viewstopwrds(main,3))
 
 dpp_button_import = Button(page3,bg="#173F5F",fg="white", font ="Arial 12 bold",text="Import a Dataset",command= lambda:importdataset())
+dpp_button_flbrowse = Button(dpp_frame_1,bg="#173F5F",fg="white", font ="Arial 8 bold",text="Browse",command= lambda:flbrowse(page3,dpp_entry_1))
 
 dpp_label_1.grid(row=0, sticky=W)
 
 dpp_frame_1.grid(row=3, sticky=W)
 dpp_label_2.grid(row=0,sticky=W)
 dpp_entry_1.grid(row=0,sticky=W,padx=130)
+dpp_button_flbrowse.grid(row=0,sticky=W,padx=370)
 dpp_label_3.grid(row=1,sticky=W)
 dpp_button_import.grid(row=2,sticky=W,padx=20)
 dpp_checkbox_1.grid(row=2,sticky=W)
@@ -247,16 +251,13 @@ v = IntVar()
 tpcmdl_radio1 = tk.Radiobutton(page2, text="Latent Dirichlet Allocation(LDA)",font= "Arial 14 bold", variable=v, value=1,command=lambda:switchmenu("LDA"));
 tpcmdl_radio2 = tk.Radiobutton(page2, text="Non-negative Matrix Factorization(NMF)",font= "Arial 14 bold", variable=v, value=2,command=lambda:switchmenu("NMF"))
 tpcmdl_radio1.select()
-tpcmdl_label_6 = Label(page2,text="Labelling Settings",font= "Arial 14 bold")
-ckboxvar = IntVar()
-tpcmdl_ckbox =Checkbutton(page2, text = "Show available labels instead of 'No Labels' for topics that has 2 labels", variable=ckboxvar)
-tpcmdl_lblbutton = Button(page2, bg="#173F5F",fg="white",font = "Arial 12 bold",text ="Label List",command = lambda: viewalllabels())
-tpcmdl_lblbutton2 = Button(page2, bg="#173F5F",fg="white",font = "Arial 12 bold",text ="Add New Label",command=lambda: addnewlabel())
-tpcmdl_lblbutton3 = Button(page2, bg="#173F5F",fg="white",font = "Arial 12 bold",text ="Remove a Label",command=lambda: remlabel())
+
+tpcmdl_flbrowse = Button(page2,bg="#173F5F",fg="white", font ="Arial 8 bold",text="Browse",command= lambda:flbrowse(page2,tpcmdl_entry_1))
 
 tpcmdl_label_1.grid(row=0, sticky=W)
 tpcmdl_label_3.grid(row=1,sticky=W)
 tpcmdl_entry_1.grid(row=1,sticky=W,padx=90)
+tpcmdl_flbrowse.grid(row=1,sticky=W,padx=380)
 
 tpcmdl_label_4.grid(row=2,sticky=W)
 ldaparam_label_1.grid(row=3,sticky=W)
@@ -273,11 +274,6 @@ ldaparam_opmenu.grid(row=7,sticky=W,padx=120)
 tpcmdl_label_5.grid(row=1,sticky=W,padx=525)
 tpcmdl_radio1.grid(row=2,sticky=W,padx=525)
 tpcmdl_radio2.grid(row=3,sticky=W,padx=525)
-tpcmdl_label_6.grid(row=4,sticky=W,padx=525)
-tpcmdl_ckbox.grid(row=5,sticky=W,padx=525)
-tpcmdl_lblbutton2.grid(row=6,sticky=W,padx=500)
-tpcmdl_lblbutton.grid(row=6,sticky=W,padx=640)
-tpcmdl_lblbutton3.grid(row=6,sticky=W,padx=740)
 
 #nmfparam_label_1.grid(row=3,sticky=W,padx=525)
 #nmfparam_entry_1.grid(row=3,sticky=W,padx=640)
@@ -306,6 +302,33 @@ tpcmdl_entry_4.grid(row=9, sticky=W,pady=8)
 #nmfparam_entry_3_ttp = ttp.CreateToolTip(nmfparam_entry_3, "When building the vocabulary ignore terms that have a document frequency strictly higher than the given threshold (corpus-specific stop words). Minimum value")
 #nmfparam_entry_4_ttp = ttp.CreateToolTip(nmfparam_entry_4, "When building the vocabulary ignore terms that have a document frequency strictly higher than the given threshold (corpus-specific stop words). Maximum value must be in float and higher than min value")
 
+
+#Labeling Settings Page
+############################################################################
+page4=  ttk.Frame(nb)
+nb.add(page4, text ='Labeling Settings')
+lbling_label = Label(page4,text="Labelling Settings", font= "Arial 15 bold" ,bg="#173F5F",width=90, fg="white")
+lbling_label2 = Label(page4, text="Topic Labelling Options",pady=3, font= "Arial 16 bold")
+lbling_rdvar = IntVar()
+lbling_radio = tk.Radiobutton(page4, text="Labeled Topics",font= "Arial 14 bold", variable=lbling_rdvar, value=0)
+lbling_radio2 = tk.Radiobutton(page4, text="Unlabeled Topics",font= "Arial 14 bold", variable=lbling_rdvar, value=2)
+lbling_radio.select()
+lbling_radio3 = tk.Radiobutton(page4,font= "Arial 9 bold", text = "Show available labels instead of 'No Labels' for topics that has 2 labels", variable=lbling_rdvar,value=3)
+lbling_label3 = Label(page4, text="Add,Edit,Remove Labels",pady=3, font= "Arial 16 bold")
+lbling_button = Button(page4, bg="#173F5F",fg="white",font = "Arial 12 bold",text ="Label List",command = lambda: viewalllabels())
+lbling_button2 = Button(page4, bg="#173F5F",fg="white",font = "Arial 12 bold",text ="Add New Label",command=lambda: addnewlabel())
+lbling_button3 = Button(page4, bg="#173F5F",fg="white",font = "Arial 12 bold",text ="Remove a Label",command=lambda: remlabel())
+lbling_uptmenuvar = IntVar()
+
+lbling_label.grid(row=0,sticky=W)
+lbling_label2.grid(row=1,sticky=W,padx=10)
+lbling_radio.grid(row=2,sticky=W,padx=10)
+lbling_radio3.grid(row=3,sticky=W,padx=10)
+lbling_radio2.grid(row=4,sticky=W,padx=10)
+lbling_label3.grid(row=1,sticky=W,padx=570)
+lbling_button2.grid(row=2,sticky=W,padx=480)
+lbling_button.grid(row=2,sticky=W,padx=650)
+lbling_button3.grid(row=2,sticky=W,padx=790)
 #############################################################################
 ##Script Functions
 #############################################################################
@@ -400,17 +423,39 @@ def genertp2(name):
                 if(x=='('):
                     label = Label(window,font="Arial 12 bold",text='Topic '+str(num))
                     texta = Text(window,height=3,width=40)
-                    entry = Entry(window)
+                    texta2 = Text(window,height=3,width=20)
                 elif(x==')'):
                     labelsLDA.append(label)
                     textasLDA.append(texta)
-                    entriesLDA.append(entry)
+                    entriesLDA.append(texta2)
                     num = int(num) + 1
                     hitwrd.write('[]')
                     if(ldaparam_opmenu_variable.get() == 'Gensim'):
-                        entry.insert(END,usmdls.getlbllda(topicsg,1,ckboxvar.get()))
+                        if(lbling_rdvar.get() == 3):
+                            mnylbls = usmdls.getlbllda(topicsg,1,lbling_rdvar.get())
+                            if(type(mnylbls)==str):
+                                texta2.insert(END,'1.)'+usmdls.getlbllda(topicsg,1,lbling_rdvar.get()))
+                            else:
+                                print(mnylbls)
+                                numlbl = 1
+                                for x in mnylbls:
+                                    texta2.insert(END,str(numlbl)+'.)'+x+'\n')
+                                    numlbl = numlbl + 1
+                        else:
+                            texta2.insert(END,usmdls.getlbllda(topicsg,1,lbling_rdvar.get()))
                     else:
-                        entry.insert(END,usmdls.getlblldamal(topicsg,1,ckboxvar.get()))
+                        if(lbling_rdvar.get() == 3):
+                            mnylbls = usmdls.getlblldamal(topicsg,1,lbling_rdvar.get())
+                            if(type(mnylbls)==str):
+                                texta2.insert(END,'1.)'+usmdls.getlblldamal(topicsg,1,lbling_rdvar.get()))
+                            else:
+                                print(mnylbls)
+                                numlbl = 1
+                                for x in mnylbls:
+                                    texta2.insert(END,str(numlbl)+'.)'+x+'\n')
+                                    numlbl = numlbl + 1
+                        else:
+                            texta2.insert(END,usmdls.getlblldamal(topicsg,1,lbling_rdvar.get()))
                     topicsg = []
                 elif(x=='*'):
                     continue
@@ -489,15 +534,25 @@ def genertp2(name):
                 if(x=='['):
                     label = Label(window,font="Arial 12 bold",text='Topic '+str(num))
                     texta = Text(window,height=3,width=40)
-                    entry = Entry(window)
+                    texta2 = Text(window,height=3,width=40)
                 elif(x==']'):
                     labelsNMF.append(label)
                     textasNMF.append(texta)
-                    entriesNMF.append(entry)
+                    entriesNMF.append(texta2)
                     num = int(num) + 1
                     hitwrd.write('[]')
                     #print(topicsg,'\n\n')
-                    entry.insert(END,usmdls.getlblnmf(topicsg,1,ckboxvar.get()))
+                    if(lbling_rdvar.get() == 3):
+                        mnylbls = usmdls.getlblnmf(topicsg,1,lbling_rdvar.get())
+                        if(type(mnylbls)==str):
+                            texta2.insert(END,'1.)'+usmdls.getlblnmf(topicsg,1,lbling_rdvar.get()))
+                        else:
+                            numlbl = 1
+                            for x in mnylbls:
+                                texta2.insert(END,str(numlbl)+'.)'+x+'\n')
+                                numlbl = numlbl + 1
+                    else:
+                        texta2.insert(END,usmdls.getlblnmf(topicsg,1,lbling_rdvar.get()))
                     topicsg = []
                 elif(x==","):
                     q = 0
@@ -878,6 +933,27 @@ def viewstopwrds(main,stats):
 #
 #Add New label
 def addnewlabel():
+    lbling_uptmenuvar.set(1)
+    lbling_button2.grid_remove()
+    lbling_button.grid_remove()
+    lbling_button3.grid_remove()
+    lbling_button4 = Button(page4, bg="#173F5F",fg="white",font = "Arial 12 bold",text ="Cancel",command=lambda: lbling_uptmenu())
+    lbling_button4.grid(row=2,sticky=W,padx=650)
+    def lbling_uptmenu():
+        window_label.grid_remove()
+        window_entry.grid_remove()
+        window_label2.grid_remove()
+        window_rbbut1.grid_remove()
+        window_rbbut2.grid_remove()
+        window_rbbut3.grid_remove()
+        window_label3.grid_remove()
+        window_texta.grid_remove()
+        window_button.grid_remove()
+
+        lbling_button4.grid_remove()
+        lbling_button2.grid(row=2,sticky=W,padx=480)
+        lbling_button.grid(row=2,sticky=W,padx=650)
+        lbling_button3.grid(row=2,sticky=W,padx=790)
     def addnwlbl(lblname,lblmdl,lblhtwrds):
         window_label4 = Label(window,text="Label Added")
         if(lblmdl==1):
@@ -900,51 +976,66 @@ def addnewlabel():
         window_entry.delete("1.0", tk.END)
         window_texta.delete("1.0", tk.END)
         
-    window = tk.Toplevel(main)
-    window.title('Add New Label')
-    window.minsize(500,320)
-    window.maxsize(500,320)
-
-    window_label = Label(window,text="Label Name:",font= "Arial 12 bold")
-    window_entry = Entry(window)
-    window_label2  = Label(window,text="Model:",font= "Arial 12 bold")
+    window_label = Label(page4,text="Label Name:",font= "Arial 12 bold")
+    window_entry = Entry(page4)
+    window_label2  = Label(page4,text="Model:",font= "Arial 12 bold")
     window_rbbutvar = IntVar()
-    window_rbbut1 = Radiobutton(window,text="Gensim LDA",font= "Arial 12 bold", variable=window_rbbutvar, value=1)
-    window_rbbut2 = Radiobutton(window,text="Mallet LDA",font= "Arial 12 bold", variable=window_rbbutvar, value=2)
-    window_rbbut3 = Radiobutton(window,text="NMF",font= "Arial 12 bold", variable=window_rbbutvar, value=3)
+    window_rbbut1 = Radiobutton(page4,text="Gensim LDA",font= "Arial 12 bold", variable=window_rbbutvar, value=1)
+    window_rbbut2 = Radiobutton(page4,text="Mallet LDA",font= "Arial 12 bold", variable=window_rbbutvar, value=2)
+    window_rbbut3 = Radiobutton(page4,text="NMF",font= "Arial 12 bold", variable=window_rbbutvar, value=3)
     window_rbbut1.select()
-    window_label3 = Label(window,text="Hitwords:",font= "Arial 12 bold",)
-    window_texta = Text(window,height=10,width=60)
-    window_button = Button(window,bg="#173F5F", fg="white",font="Arial 12 bold" ,text="Add new label",command=lambda:addnwlbl(window_entry.get(),window_rbbutvar.get(),window_texta.get("1.0",END)))
+    window_label3 = Label(page4,text="Hitwords:",font= "Arial 12 bold",)
+    window_texta = Text(page4,height=10,width=60)
+    window_button = Button(page4,bg="#173F5F", fg="white",font="Arial 12 bold" ,text="Add new label",command=lambda:addnwlbl(window_entry.get(),window_rbbutvar.get(),window_texta.get("1.0",END)))
 
-    window_label.grid(row=0,sticky=W,padx=10)
-    window_entry.grid(row=0,sticky=W,padx=120)
-    window_label2.grid(row=1,sticky=W,padx=10)
-    window_rbbut1.grid(row=1,sticky=W,padx=70)
-    window_rbbut2.grid(row=1,sticky=W,padx=200)
-    window_rbbut3.grid(row=1,sticky=W,padx=320)
-    window_label3.grid(row=2,sticky=W,padx=10)
-    window_texta.grid(row=3,sticky=W,padx=10)
-    window_button.grid(row=4,sticky=W,padx=190,pady=5)
+    window_label.grid(row=3,sticky=W,padx=480,pady=10)
+    window_entry.grid(row=3,sticky=W,padx=585)
+    window_label2.grid(row=4,sticky=W,padx=480)
+    window_rbbut1.grid(row=4,sticky=W,padx=540)
+    window_rbbut2.grid(row=4,sticky=W,padx=670)
+    window_rbbut3.grid(row=4,sticky=W,padx=790)
+    window_label3.grid(row=5,sticky=W,padx=480)
+    window_texta.grid(row=6,sticky=W,padx=480)
+    window_button.grid(row=7,sticky=W,padx=670,pady=5)
     
 
 ############################################################################
 #
 #Edit labeling
 def viewalllabels():
+    lbling_button2.grid_remove()
+    lbling_button.grid_remove()
+    lbling_button3.grid_remove()
+    lbling_button4 = Button(page4, bg="#173F5F",fg="white",font = "Arial 12 bold",text ="Cancel",command=lambda: lbling_uptmenu())
+    lbling_button4.grid(row=2,sticky=W,padx=650)
+    def lbling_uptmenu():
+        window_label2.grid_remove()
+        window_opmenu.grid_remove()
+        window_label3.grid_remove()
+        window_opmenu2.grid_remove()
+        window_label4.grid_remove()
+        window_texta.grid_remove()
+        window_button.grid_remove()
+        window_opmenu3.grid_remove()
+        window_opmenu4.grid_remove()
+
+        lbling_button4.grid_remove()
+        lbling_button2.grid(row=2,sticky=W,padx=480)
+        lbling_button.grid(row=2,sticky=W,padx=650)
+        lbling_button3.grid(row=2,sticky=W,padx=790)
     def switchlabels(*args):
         lebellist = window_opmenu_var.get()
         if(lebellist == 'Gensim LDA'):
             window_opmenu3.grid_remove()
             window_opmenu4.grid_remove()
-            window_opmenu2.grid(row=1,sticky=W,padx=200)
+            window_opmenu2.grid(row=3,sticky=W,padx=720)
         elif(lebellist == 'Mallet LDA'):
-            window_opmenu3.grid(row=1,sticky=W,padx=200)
+            window_opmenu3.grid(row=3,sticky=W,padx=720)
             window_opmenu4.grid_remove()
             window_opmenu2.grid_remove()
         else:
             window_opmenu3.grid_remove()
-            window_opmenu4.grid(row=1,sticky=W,padx=200)
+            window_opmenu4.grid(row=3,sticky=W,padx=720)
             window_opmenu2.grid_remove()
     def chnglbllda(*args):
         window_texta.delete('1.0',END)
@@ -971,67 +1062,100 @@ def viewalllabels():
             labelwords = flhandle.read()
         window_texta.insert(END,labelwords)
         
-    window = tk.Toplevel(main)
-    window.title('List of All Labels')
-    window.minsize(500,320)
-    window.maxsize(500,320)
-
-    window_label = Label(window,font= "Arial 12 bold",text="Edit label hitwords")
-    window_label2 = Label(window,font= "Arial 8 bold",text="Model:")
-    window_label3 = Label(window,font= "Arial 8 bold",text="Labels:")
+    window_label = Label(page4,font= "Arial 12 bold",text="Edit label hitwords")
+    window_label2 = Label(page4,font= "Arial 8 bold",text="Model:")
+    window_label3 = Label(page4,font= "Arial 8 bold",text="Labels:")
 
     listahan = ['Gensim LDA','Mallet LDA','NMF']
     window_opmenu_var = StringVar()
-    window_opmenu = OptionMenu(window, window_opmenu_var, *listahan)
+    window_opmenu = OptionMenu(page4, window_opmenu_var, *listahan)
     window_opmenu_var.trace("w",switchlabels)
     
-    window_opmenu2_var = StringVar(window)
+    window_opmenu2_var = StringVar(page4)
     ldalabels = []
     with open('files/lbllistlda.lst','r') as fileh:
         lbllistlda = fileh.read()
     lbllistlda = lbllistlda.split(',')
     for x in lbllistlda:
         ldalabels.append(x)
-    window_opmenu2 = OptionMenu(window, window_opmenu2_var, *ldalabels)
+    window_opmenu2 = OptionMenu(page4, window_opmenu2_var, *ldalabels)
     window_opmenu2_var.trace("w",chnglbllda)
     
-    window_opmenu3_var = StringVar(window)
+    window_opmenu3_var = StringVar(page4)
     malldalabels = []
     with open('files/lbllistldamal.lst','r') as fileh:
         lbllistldamal = fileh.read()
     lbllistldamal = lbllistldamal.split(',')
     for x in lbllistldamal:
         malldalabels.append(x)
-    window_opmenu3 = OptionMenu(window, window_opmenu3_var, *malldalabels)
+    window_opmenu3 = OptionMenu(page4, window_opmenu3_var, *malldalabels)
     window_opmenu3_var.trace("w",chnglbllda2)
     
-    window_opmenu4_var = StringVar(window)
+    window_opmenu4_var = StringVar(page4)
     nmflabels = []
     with open('files/lbllistnmf.lst','r') as fileh:
         lbllistnmf = fileh.read()
     lbllistnmf = lbllistnmf.split(',')
     for x in lbllistnmf:
-        nmflabels.append(x+' - NMF')
-    window_opmenu4 = OptionMenu(window, window_opmenu4_var, *nmflabels)
+        nmflabels.append(x)
+    window_opmenu4 = OptionMenu(page4, window_opmenu4_var, *nmflabels)
     window_opmenu4_var.trace("w",chnglbllda3)
+    
+    def updatewords(lblname):
+        if(lblname == 'Mallet LDA'):
+            lblname = window_opmenu3_var.get()
+            flname = 'malldalabel'+'-'+lblname+'.lbl'
+            with open('files/'+flname,'w') as flhandle:
+                flhandle.write(window_texta.get("1.0",END))
+                #print(window_textentry.get("1.0",END))
+                window_texta.delete("1.0", tk.END)
+        elif(lblname == 'NMF'):
+            lblname = window_opmenu4_var.get()
+            flname = 'nmflabel'+'-'+lblname+'.lbl'
+            with open('files/'+flname,'w') as flhandle:
+                flhandle.write(window_texta.get("1.0",END))
+                #print(window_textentry.get("1.0",END))
+                window_texta.delete("1.0", tk.END)
+        else:
+            lblname = window_opmenu2_var.get()
+            flname = 'ldalabel'+'-'+lblname+'.lbl'
+            with open('files/'+flname,'w') as flhandle:
+                flhandle.write(window_texta.get("1.0",END))
+                #print(window_textentry.get("1.0",END))
+                window_texta.delete("1.0", tk.END)
 
-    window_label4 = Label(window,font= "Arial 12 bold",text="Hitwords:")
-    window_texta = Text(window,height=10,width=60)
-    window_button = Button(window,bg="#173F5F", fg="white",font="Arial 12 bold",text="Update label hitwords")
+    window_label4 = Label(page4,font= "Arial 12 bold",text="Hitwords:")
+    window_texta = Text(page4,height=10,width=58)
+    window_button = Button(page4,bg="#173F5F", fg="white",font="Arial 12 bold",text="Update label hitwords",command=lambda:updatewords(window_opmenu_var.get()))
 
-    window_label.grid(row=0,sticky=W,padx=193)
-    window_label2.grid(row=1,sticky=W,padx=5)
-    window_opmenu.grid(row=1,sticky=W,padx=45)
-    window_label3.grid(row=1,sticky=W,padx=160)
-    window_opmenu2.grid(row=1,sticky=W,padx=200)
+    window_label2.grid(row=3,sticky=W,padx=480,pady=10)
+    window_opmenu.grid(row=3,sticky=W,padx=540)
+    window_label3.grid(row=3,sticky=W,padx=670)
+    window_opmenu2.grid(row=3,sticky=W,padx=720)
 
-    window_label4.grid(row=2,sticky=W,padx=5)
-    window_texta.grid(row=3,sticky=W,padx=8)
-    window_button.grid(row=4,sticky=W,padx=190,pady=5)
+    window_label4.grid(row=4,sticky=W,padx=480)
+    window_texta.grid(row=5,sticky=W,padx=480)
+    window_button.grid(row=6,sticky=W,padx=670,pady=5)
 ############################################################################
 #
 #Remove label
 def remlabel():
+    lbling_button2.grid_remove()
+    lbling_button.grid_remove()
+    lbling_button3.grid_remove()
+    lbling_button4 = Button(page4, bg="#173F5F",fg="white",font = "Arial 12 bold",text ="Cancel",command=lambda: lbling_uptmenu())
+    lbling_button4.grid(row=2,sticky=W,padx=650)
+    def lbling_uptmenu():
+        window_label.grid_remove()
+        window_opmenu.grid_remove()
+        window_label2.grid_remove()
+        window_texta.grid_remove()
+        window_button.grid_remove()
+
+        lbling_button4.grid_remove()
+        lbling_button2.grid(row=2,sticky=W,padx=480)
+        lbling_button.grid(row=2,sticky=W,padx=650)
+        lbling_button3.grid(row=2,sticky=W,padx=790)
     def viewlbls(*args):
         window_texta.delete('1.0',END)
         lstname = window_opmenu_var.get()
@@ -1063,78 +1187,79 @@ def remlabel():
                 file.write(vals)
             window_texta.delete('1.0',END)
 
-    window = tk.Toplevel(main)
-    window.title('Remove Label')
-    window.minsize(500,320)
-    window.maxsize(500,320)
-
-    window_label = Label(window,font= "Arial 12 bold",text="Model")
+    window_label = Label(page4,font= "Arial 12 bold",text="Model")
     listahan = ['Gensim LDA','Mallet LDA','NMF']
     window_opmenu_var = StringVar()
-    window_opmenu = OptionMenu(window, window_opmenu_var, *listahan)
+    window_opmenu = OptionMenu(page4, window_opmenu_var, *listahan)
     window_opmenu_var.set('-------')
     window_opmenu_var.trace("w",viewlbls)
-    window_label2 = Label(window,font= "Arial 12 bold",text="Labels")
-    window_texta = Text(window,height=10,width=60)
-    window_button = Button(window,bg="#173F5F", fg="white",font="Arial 12 bold",text="Update List",command=lambda:updtlst())
+    window_label2 = Label(page4,font= "Arial 12 bold",text="Labels")
+    window_texta = Text(page4,height=10,width=60)
+    window_button = Button(page4,bg="#173F5F", fg="white",font="Arial 12 bold",text="Update List",command=lambda:updtlst())
     
-    window_label.grid(row=0,sticky=W,padx=5)
-    window_opmenu.grid(row=1,sticky=W,padx=45)
-    window_label2.grid(row=2,sticky=W,padx=5)
-    window_texta.grid(row=3,sticky=W,padx=8)
-    window_button.grid(row=4,sticky=W,padx=190,pady=5)
+    window_label.grid(row=3,sticky=W,padx=480,pady=10)
+    window_opmenu.grid(row=3,sticky=W,padx=540)
+    window_label2.grid(row=4,sticky=W,padx=480)
+    window_texta.grid(row=5,sticky=W,padx=480)
+    window_button.grid(row=6,sticky=W,padx=670,pady=5)
 ############################################################################
 #
 #Import another csv file
 def importdataset():
     def openimport(name):
         os.system("start EXCEL.EXE "+name)
-    def importdtast(impfile,colname,expfile):
-        expfile = expfile + '.csv'
+    def importdtast(impfile,expfile):
         window_label6 = Label(window,text="Data Imported saved as "+expfile)
-        window_button2 = Button(window,bg="#173F5F",text="Open in Excel",command=lambda:openimport(expfile))
+        window_button2 = Button(window,bg="#173F5F",text="Open in Excel",command=lambda:openimport(expfile+'-readable'+'.csv'))
         
         data = pd.read_csv(impfile, error_bad_lines=False)
         # We only need the Headlines text column from the data
-        data_text = data[[colname]]
-        data[['data']] = data[[colname]]
         data_text = data[['data']]
         data_text = data_text.astype('str');
         data = data_text.data.values.tolist()
-        with open(expfile,'w') as filehandle:
+        with open(expfile+'-readable'+'.csv','w') as filehandle:
             filehandle.write('data\n')
             for x in data:
                 filehandle.write(str((x).encode("utf-8"))+"\n")
-        window_label6.grid(row=5,sticky=W)
-        window_button2.grid(row=5,sticky=W,padx=210)
+        cleaned = t2.cleaning(impfile,emailvar.get(),linkvar.get(),speccharvar.get(),stpwrdvar.get(),dpp_entry_4)
+        fname = expfile+".cds"
+        with open(fname,"wb") as filehandle:
+            pickle.dump(cleaned,filehandle,protocol=pickle.HIGHEST_PROTOCOL)
+        
+        window_label6.grid(row=6,sticky=W)
+        window_button2.grid(row=6,sticky=W,padx=230)
+        window_label7.grid(row=7,sticky=W)
+        window_label5.grid(row=8,sticky=W)
     
     window = tk.Toplevel(main)
     window.title('Import another dataset')
-    window.minsize(350,140)
-    window.maxsize(350,140)
+    window.minsize(380,220)
+    window.maxsize(380,220)
 
-    window_label = Label(window,text="Import a csv file")
-    window_label2 = Label(window,text="Filename of csv file to be imported")
-    window_label3 = Label(window,text="Column name of the data to be imported")
-    window_label4 = Label(window,text="Filename of the imported csv file")
-    window_label5 = Label(window,text=".csv")
+    window_label = Label(window,text="Import a csv/txt file")
+    window_label2 = Label(window,text="Filename of csv/txt file to be imported")
+    window_label3 = Label(window,text="Filename for the imported csv file")
+    window_label4 = Label(window,text=".cds")
+    window_label5 = Label(window,text="**Note - Data set in the files must have a column name of 'data'\n e.g.\ndata\n words,words\nword")
+    window_label7 = Label(window,text="-----------------------------------------------------------------------------------------------")
     
     window_entry = Entry(window)
-    window_entry2 = Entry(window)
     window_entry3 = Entry(window)
     window_entry3.insert(END,'importeddataset')
 
-    window_button = Button(window,text="Import file",bg="#173F5F",font="Arial 12 bold",fg="white",command=lambda:importdtast(window_entry.get(),window_entry2.get(),window_entry3.get()))
-
+    window_button = Button(window,text="Import file",bg="#173F5F",font="Arial 12 bold",fg="white",command=lambda:importdtast(window_entry.get(),window_entry3.get()))
+    window_button2 = Button(window,bg="#173F5F",fg="white", font ="Arial 8 bold",text="Browse",command= lambda:flbrowse(page2,window_entry))
+    
     window_label.grid(row=0,sticky=W,padx=120)
     window_label2.grid(row=1,sticky=W)
-    window_label3.grid(row=2,sticky=W)
-    window_label4.grid(row=3,sticky=W)
-    window_label5.grid(row=3,sticky=W,padx=300)
-    window_entry.grid(row=1,sticky=W,padx=190)
-    window_entry2.grid(row=2,sticky=W,padx=230)
-    window_entry3.grid(row=3,sticky=W,padx=180)
-    window_button.grid(row=4,sticky=W,padx=120)
+    window_label3.grid(row=3,sticky=W)
+    window_label4.grid(row=3,sticky=W,padx=320)
+    window_entry.grid(row=1,sticky=W,padx=210)
+    window_button2.grid(row=1,sticky=W,padx=310)
+    window_entry3.grid(row=3,sticky=W,padx=190)
+    window_button.grid(row=4,sticky=W,padx=130)
+    window_label7.grid(row=5,sticky=W)
+    window_label5.grid(row=6,sticky=W)
 ############################################################################
 #
 #Switch Menu
@@ -1179,5 +1304,12 @@ def switchmenu(algo):
         ldaparam_entry_5.grid(row=5,sticky=W,padx=140)
         ldaparam_label_7.grid(row=7,sticky=W)
         ldaparam_opmenu.grid(row=7,sticky=W,padx=120)
+############################################################################
+#
+#File Browsing
+def flbrowse(menu,textentry):
+    flval = fd.askopenfilename()
+    textentry.delete(0,END)
+    textentry.insert(END,flval)
 
 main.mainloop()
