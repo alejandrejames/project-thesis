@@ -186,7 +186,7 @@ def getlbllda(topics,status,lbling):
     return tplbl
 
 def getlblldamal(topics,status,lbling):
-    with open('files/lbllistlda.lst','r') as filehandle:
+    with open('files/lbllistldamal.lst','r') as filehandle:
           stringfrm = filehandle.readline()
      
     lbllist = stringfrm.split(',')
@@ -199,7 +199,7 @@ def getlblldamal(topics,status,lbling):
     for x in range(0,num):
         score = 0
         labelwrds = []
-        with open('files/ldalabel-'+lbllist[x]+'.lbl') as file:
+        with open('files/malldalabel-'+lbllist[x]+'.lbl') as file:
             wrds = file.readline()
             labelwrds = wrds.split(',')
         #print('scoring')     

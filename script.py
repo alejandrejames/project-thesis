@@ -4,33 +4,42 @@ from tkinter import *
 from tkinter import ttk
 import tkinter as tk
 
-data = pd.read_csv('orginaldata.csv', 
+data = pd.read_csv('improveddata.csv', 
 error_bad_lines=False)
 # We only need the Headlines text column from the data
 data_text = data[['data']]
 data_text = data_text.astype('str');
 data = data_text.data.values.tolist()
+wrds = ['city','tete']
 
-main = Tk()
-main.title('Scripting tool')
-main.geometry('1200x600')
-main.maxsize(1200,600)
-main.minsize(1200,600)
-num = 0
-for x in data:
-    if(x!='nan'):
-        print(data[num])
-    num = num + 1
+window = Tk()
+window.title('Tweet Viewer')
+window.geometry('700x900')
 
-def searchres(inp):
-    text1.delete('1.0', tk.END)
-    print(entry1.get())
-    listelem = []
+variable = StringVar(window)
+variable.set(wrds[0]) # default value
+
+lbl = Label(window,text="Words")
+w = OptionMenu(window, variable, *wrds)
+bttn = Button(window,text="view tweets",command=lambda:searchwrd(variable.get()))
+lbl2 = Label(window,text="Tweets")
+text1 = Text(window)
+text1.config(state="disabled")
+
+def searchwrd(wrd):
+    text1.config(state="normal")
+    print(wrd)
+    text1.delete("1.0",END)
     num = 0
-    with open('scriptresults.txt','w') as file:
+    for y in data:
+        if(str(wrd) in y):
+            num = num + 1
+            text1.insert(END,str(num)+".) "+y+"\n\n")
+    text1.config(state="disabled")
     
-        for num in range(0,9069):
-            if(inp in data[num]):
-                text = str(num)+'-Tweet = '+data[num]+'\n\n'
-                text1.insert(END,text)
-                file.write(text)
+lbl.pack()
+w.pack()
+bttn.pack()
+lbl2.pack()
+text1.pack()
+

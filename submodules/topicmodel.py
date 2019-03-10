@@ -29,7 +29,7 @@ import random
 from wordcloud import WordCloud, STOPWORDS
 import tkinter as tk
 import os
-
+import shutil
 
 def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
     from nltk.corpus import stopwords
@@ -68,7 +68,7 @@ def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
     data_text = data_text.astype('str');
     data = data_text.data.values.tolist()
     ##
-
+    shutil.copy2(csvname, 'files/dataset-viewing.csv')
     ##Cleaning
     # Remove Emails
     if(email == 1):

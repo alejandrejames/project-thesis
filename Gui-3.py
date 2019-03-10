@@ -939,6 +939,7 @@ def addnewlabel():
     lbling_button3.grid_remove()
     lbling_button4 = Button(page4, bg="#173F5F",fg="white",font = "Arial 12 bold",text ="Cancel",command=lambda: lbling_uptmenu())
     lbling_button4.grid(row=2,sticky=W,padx=650)
+    window_label4 = Label(page4,text="Label Added")
     def lbling_uptmenu():
         window_label.grid_remove()
         window_entry.grid_remove()
@@ -949,13 +950,13 @@ def addnewlabel():
         window_label3.grid_remove()
         window_texta.grid_remove()
         window_button.grid_remove()
+        window_label4.grid_remove()
 
         lbling_button4.grid_remove()
         lbling_button2.grid(row=2,sticky=W,padx=480)
         lbling_button.grid(row=2,sticky=W,padx=650)
         lbling_button3.grid(row=2,sticky=W,padx=790)
     def addnwlbl(lblname,lblmdl,lblhtwrds):
-        window_label4 = Label(window,text="Label Added")
         if(lblmdl==1):
             print(1)
             with open("files/ldalabel-"+lblname+".lbl","w") as filehandle:
@@ -972,9 +973,9 @@ def addnewlabel():
                 filehandle.write(lblhtwrds)
             with open("files/lbllistnmf.lst","a") as filehandle:
                 filehandle.write(","+lblname)
-        window_label4.grid(row=5,sticky=W,padx=190)
-        window_entry.delete("1.0", tk.END)
-        window_texta.delete("1.0", tk.END)
+        window_label4.grid(row=8,sticky=W,padx=670,pady=6)
+        window_entry.delete("0", END)
+        window_texta.delete("1.0", END)
         
     window_label = Label(page4,text="Label Name:",font= "Arial 12 bold")
     window_entry = Entry(page4)
