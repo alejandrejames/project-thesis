@@ -38,13 +38,14 @@ from tkinter import ttk
 import tkinter as tk
 
 def collectdata(query,num,startd,endd,flname):
-    collect = 'python Exporter.py --querysearch "'
+    collect = 'python submodules/Exporter.py --querysearch "'
     collect = collect + query
-    collect = collect + '" --since '+startd+' --until '+endd+' --maxtweets '+num+' --output '+flname+'.csv'
+    collect = collect + '" --since '+startd+' --until '+endd+' --maxtweets '+num+' --output '+'"outputs/'+flname+'.csv"'
     subprocess.call(collect, shell=True)
+    print(collect)
 
 def getlblnmf(topics,status,lbling):
-    with open('files/lbllistnmf.lst','r') as filehandle:
+    with open('files/labeling/lbllistnmf.lst','r') as filehandle:
           stringfrm = filehandle.readline()
      
     lbllist = stringfrm.split(',')
@@ -57,23 +58,17 @@ def getlblnmf(topics,status,lbling):
     for x in range(0,num):
         score = 0
         labelwrds = []
-        with open('files/nmflabel-'+lbllist[x]+'.lbl') as file:
+        with open('files/labeling/nmflabel-'+lbllist[x]+'.lbl') as file:
             wrds = file.readline()
             labelwrds = wrds.split(',')
-        #print('scoring')     
         for y in topics:
             if y in labelwrds:
                 score = score + 1
             else:
                 continue
-            #print('--',y)
-          
-          
+
         labelscores[x] = score
-     
-    #print('------------------------------')
-    #print(lbllist)
-    #print(labelscores)
+
     counter = 0
     lblindx = []
     tplbl = []
@@ -115,7 +110,7 @@ def getlblnmf(topics,status,lbling):
     return tplbl
 
 def getlbllda(topics,status,lbling):
-    with open('files/lbllistldamal.lst','r') as filehandle:
+    with open('files/labeling/lbllistldamal.lst','r') as filehandle:
           stringfrm = filehandle.readline()
      
     lbllist = stringfrm.split(',')
@@ -128,23 +123,17 @@ def getlbllda(topics,status,lbling):
     for x in range(0,num):
         score = 0
         labelwrds = []
-        with open('files/malldalabel-'+lbllist[x]+'.lbl') as file:
+        with open('files/labeling/malldalabel-'+lbllist[x]+'.lbl') as file:
             wrds = file.readline()
             labelwrds = wrds.split(',')
-        #print('scoring')     
         for y in topics:
             if y in labelwrds:
                 score = score + 1
             else:
                 continue
-            #print('--',y)
-          
-          
+
         labelscores[x] = score
-     
-    #print('------------------------------')
-    #print(lbllist)
-    #print(labelscores)
+
     counter = 0
     lblindx = []
     tplbl = []
@@ -186,7 +175,7 @@ def getlbllda(topics,status,lbling):
     return tplbl
 
 def getlblldamal(topics,status,lbling):
-    with open('files/lbllistldamal.lst','r') as filehandle:
+    with open('files/labeling/lbllistldamal.lst','r') as filehandle:
           stringfrm = filehandle.readline()
      
     lbllist = stringfrm.split(',')
@@ -199,23 +188,17 @@ def getlblldamal(topics,status,lbling):
     for x in range(0,num):
         score = 0
         labelwrds = []
-        with open('files/malldalabel-'+lbllist[x]+'.lbl') as file:
+        with open('files/labeling/malldalabel-'+lbllist[x]+'.lbl') as file:
             wrds = file.readline()
             labelwrds = wrds.split(',')
-        #print('scoring')     
         for y in topics:
             if y in labelwrds:
                 score = score + 1
             else:
                 continue
-            #print('--',y)
-          
-          
+
         labelscores[x] = score
-     
-    #print('------------------------------')
-    #print(lbllist)
-    #print(labelscores)
+
     counter = 0
     lblindx = []
     tplbl = []
@@ -257,7 +240,7 @@ def getlblldamal(topics,status,lbling):
     return tplbl
 
 def ldaout(fl4):
-    fl3 = open('ldaresult.res','r')
+    fl3 = open('files/generatedoutputs/ldaresult.res','r')
     conts = fl3.readline()
     flag=0
     num = 0
@@ -287,7 +270,7 @@ def ldaout(fl4):
     fl3.close()
 
 def nmfout(fl2):
-    fl = open('nmfresult.res','r')
+    fl = open('files/generatedoutputs/nmfresult.res','r')
     conts = fl.readline()
     flag=0
     num = 0
@@ -315,15 +298,13 @@ def nmfout(fl2):
     fl.close()
 
 def ldafreqbar():
-    with open('ldamdl.lda', 'rb') as filehandle:
+    with open('files/tpcmdls/ldamdl.lda', 'rb') as filehandle:
         lda_model = pickle.load(filehandle)
     stringfrm = ""
     thelist = []
-    #print(lda_model.strip('+'))
     for x in lda_model:
         if(x == '*'):
             thelist.append(stringfrm)
-            #print(stringfrm)
             stringfrm = ""
         elif(x == "'"):
               continue
@@ -365,7 +346,6 @@ def ldafreqbar():
                     num = num + 1
                 else:
                     continue
-            #print("Word=",thelist[x],"Occur=",num)
             thelist2.append(x)
             thelist3.append(num)
       
@@ -378,19 +358,17 @@ def ldafreqbar():
     plt.xticks(y_pos, objects,rotation='vertical',fontsize=10)
     plt.ylabel('Frequency')
     plt.title('Words')
-    plt.savefig('bar', dpi=350)
+    plt.savefig('outputs/LDA-MatplotlibFreqBar', dpi=350)
     plt.show()
 
 def nmffreqbar():
-    with open('nmfmdl.nmf', 'rb') as filehandle:
+    with open('files/tpcmdls/nmfmdl.nmf', 'rb') as filehandle:
         lda_model = pickle.load(filehandle)
     stringfrm = ""
     thelist = []
-    #print(lda_model)
     for x in lda_model:
         if(x == ','):
             thelist.append(stringfrm)
-            #print(stringfrm)
             stringfrm = ""
         elif(x == '\''):
               continue
@@ -408,7 +386,6 @@ def nmffreqbar():
             continue
         elif(x == ']'):
             thelist.append(stringfrm)
-            #print(stringfrm)
             stringfrm = ""
         elif(x == '1' or x == '2' or x == '3' or x == '4' or x == '5' or x == '6' or x == '7' or x == '8' or x == '9' or x == '0'):
             continue
@@ -422,7 +399,6 @@ def nmffreqbar():
     thelist2 = []
     thelist3 = []
     for x in thelist:
-        #print(x)
         num = 0
         if(x in thelist2):
             continue
@@ -432,7 +408,6 @@ def nmffreqbar():
                     num = num + 1
                 else:
                     continue
-            #print("Word=",thelist[x],"Occur=",num)
             thelist2.append(x)
             thelist3.append(num)
           
@@ -445,7 +420,7 @@ def nmffreqbar():
     plt.xticks(y_pos, objects,rotation='vertical',fontsize=10)
     plt.ylabel('Frequency')
     plt.title('Words')
-    plt.savefig('bar', dpi=350)
+    plt.savefig('outputs/NMF-MatplotlibFreqBar', dpi=350)
     plt.show()
 
 class CustomText(tk.Text):

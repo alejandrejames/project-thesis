@@ -35,27 +35,23 @@ def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
     from nltk.corpus import stopwords
     stop_words = stopwords.words('english')
     stpwrds_extension = ''
-    with open('additional_stop_words.asw', 'r') as filehandle:
+    with open('files/stopwords/additional_stop_words.asw', 'r') as filehandle:
         string1 = filehandle.read()
         stpwrds_extension = stpwrds_extension+','+string1
     stpwrds_extension = stpwrds_extension.split('\n')
     stop_words.extend(stpwrds_extension)
-    #print(stpwrds_extension,'\n')
     stpwrds_extension2 = ''
-    with open('additional_stop_words_tagalog.asw', 'r') as filehandle:
+    with open('files/stopwords/additional_stop_words_tagalog.asw', 'r') as filehandle:
         string1 = filehandle.read()
         stpwrds_extension2 = stpwrds_extension2+','+string1
     stpwrds_extension2 = stpwrds_extension2.split('\n')
     stop_words.extend(stpwrds_extension2)
-    #print(stpwrds_extension2,'\n')
     stpwrds_extension3 = ''
-    with open('additional_stop_words_mallet.asw', 'r') as filehandle:
+    with open('files/stopwords/additional_stop_words_mallet.asw', 'r') as filehandle:
         string1 = filehandle.read()
         stpwrds_extension3 = stpwrds_extension3+','+string1
-    #print(stpwrds_extension,'\n')
     stpwrds_extension3 = stpwrds_extension3.split('\n')
     stop_words.extend(stpwrds_extension3)
-    #print(stop_words)
     dpp_entry_4.insert(tk.END,'Stopwords Loaded\n')
     dpp_entry_4.see(tk.END)
     dpp_entry_4.insert(tk.END,'Cleaning...\n')
@@ -121,7 +117,7 @@ def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
             doc = nlp(" ".join(sent)) 
             texts_out.append([token.lemma_ for token in doc if token.pos_ in allowed_postags])
         return texts_out
-    with open('clean1.txt', 'w') as filehandle:
+    with open('files/generatedoutputs/clean(no ngrams).txt', 'w') as filehandle:
         line = ' '.join(str(x) for x in data_words)
         filehandle.write(str((line + '\n').encode("utf-8")))
     if(stpwrds == 1):
@@ -136,7 +132,7 @@ def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
     dpp_entry_4.see(tk.END)
     # Form Bigrams
     data_words_bigrams = make_bigrams(data_words_nostops)
-    with open('clean2.txt', 'w') as filehandle:
+    with open('files/generatedoutputs/clean(unlemmatized).txt', 'w') as filehandle:
         line = ' '.join(str(x) for x in data_words_bigrams)
         filehandle.write(str((line + '\n').encode("utf-8")))
 
@@ -146,13 +142,13 @@ def cleaning(csvname,email,links,specchars,stpwrds,dpp_entry_4):
     ##
     
     data_lemmatized2 = remove_stopwords(data_lemmatized)
-    with open('clean.txt', 'w') as filehandle:
+    with open('files/generatedoutputs/clean(lemmatized).txt', 'w') as filehandle:
         line = ' '.join(str(x) for x in data_lemmatized2)
         filehandle.write(str((line + '\n').encode("utf-8")))
-    with open('clean.txt', 'r') as filehandle:
+    with open('files/generatedoutputs/clean(lemmatized).txt', 'r') as filehandle:
         string = filehandle.read()
     lista = string.split('] [')
-    with open('cleaneddataset-readable.csv', 'w') as filehandle:
+    with open('outputs/cleaneddataset-readable.csv', 'w') as filehandle:
         filehandle.write('Cleaned Words')
         filehandle.write('\n')
         for x in lista:
@@ -188,34 +184,29 @@ def ldamdl(corpus,data_lemmatized,numtopics,randomstate,update,tpasses,wrdpt):
                                                    passes=tpasses,
                                                    alpha='auto',
                                                    per_word_topics=True,iterations=update)
-    #pprint(lda_model.print_topics(numtopics,wrdpt))
+
     data = lda_model.print_topics(numtopics,wrdpt)
-    with open('ldamdl.lda', 'wb') as filehandle:
+    with open('files/tpcmdls/ldamdl.lda', 'wb') as filehandle:
             pickle.dump(str(data),filehandle,protocol=pickle.HIGHEST_PROTOCOL)
     doc_lda = lda_model[corpus]
-    #for t in range(lda_model.num_topics):
-     #   plt.figure()
-      #  plt.imshow(WordCloud().fit_words(dict(lda_model.show_topic(t, 200))))
-       # plt.axis("off")
-        #plt.title("Topic #" + str(t))
-       # plt.show()
+
     vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
-    pyLDAvis.save_html(vis, 'LDA_Visualization.html')
+    pyLDAvis.save_html(vis, 'files/LDA_Visualization.html')
     return str(data)
     
 def mallda(corpus,data_lemmatized,numtopics,wpt,iterat):
-    print("Traning..")
+
     id2word = corpora.Dictionary(data_lemmatized)
     mallet_path = os.getcwd()
     mallet_path = mallet_path + "/mallet-2.0.8/bin/mallet"
     ldamallet = gensim.models.wrappers.LdaMallet(mallet_path, corpus=corpus, num_topics=numtopics, id2word=id2word,workers=4, prefix=None,optimize_interval=0, iterations=iterat)
-    #pprint(ldamallet.show_topics(formatted=False,num_topics=numtopics, num_words=wpt))
+
     data = ldamallet.show_topics(formatted=True,num_topics=numtopics, num_words=wpt)
-    #print(str(data))
+
     lda_model = gensim.models.wrappers.ldamallet.malletmodel2ldamodel(ldamallet)
     vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
-    pyLDAvis.save_html(vis, 'LDA_Visualization.html')
-    with open('ldamdl.lda', 'wb') as filehandle:
+    pyLDAvis.save_html(vis, 'files/LDA_Visualization.html')
+    with open('files/tpcmdls/ldamdl.lda', 'wb') as filehandle:
             pickle.dump(str(data),filehandle,protocol=pickle.HIGHEST_PROTOCOL)
     return str(data)
     
@@ -227,51 +218,29 @@ def nmfmdl(data,numtopics,mfeatures,wpt,iterat,rstate):
     transformer = TfidfTransformer(smooth_idf=False);
     x_tfidf = transformer.fit_transform(x_counts);
     xtfidf_norm = normalize(x_tfidf, norm='l1', axis=1)
-    #obtain a NMF model.
     model = NMF(n_components=num_topics, init='nndsvd',max_iter=iterat);
-    #fit the model
     model.fit(xtfidf_norm)
-    def get_nmf_topics(model, n_top_words):
-    
-        #the word ids obtained need to be reverse-mapped to the words so we can print the topic names.
-        feat_names = vectorizer.get_feature_names()
-        word_dict = {};
-        for i in range(num_topics):
-            print("Working on\n")
-            #for each topic, obtain the largest values, and add the words they map to into the dictionary.
-            words_ids = model.components_[i].argsort()[:-n_top_words - 1:-1]
-            words = [feat_names[key] for key in words_ids]
-            word_dict['Topic # ' + '{:02d}'.format(i+1)] = words;
-            print(word_dict['Topic # ' + '{:02d}'.format(i+1)])
-        return pd.DataFrame(word_dict);
     
     def fileout(model, n_top_words):
-    
-        #the word ids obtained need to be reverse-mapped to the words so we can print the topic names.
+
         feat_names = vectorizer.get_feature_names()
 
         nmfval = ""
         word_dict = {};
         for i in range(num_topics):
-            print("Working on\n")
-            #for each topic, obtain the largest values, and add the words they map to into the dictionary.
             words_ids = model.components_[i].argsort()[:-n_top_words - 1:-1]
             words = [feat_names[key] for key in words_ids]
             word_dict['Topic # ' + '{:02d}'.format(i+1)] = words;
             nmfval = nmfval + str(word_dict['Topic # ' + '{:02d}'.format(i+1)])
-            #print(word_dict['Topic # ' + '{:02d}'.format(i+1)])
         return nmfval;
-    #dict2 = get_nmf_topics(model, 5)
+
     dict = fileout(model, wpt)
-    #pprint(dict2)
-    #print(str(dict))
-    with open('nmfmdl.nmf', 'wb') as filehandle:
+
+
+    with open('files/tpcmdls/nmfmdl.nmf', 'wb') as filehandle:
             pickle.dump(str(dict),filehandle,protocol=pickle.HIGHEST_PROTOCOL)
-    #print(dict2)
-    #with open('nmf1', 'w') as filehandle:
-        #filehandle.write(str(dict2))
-    with open('nmf2', 'w') as filehandle:
+
+    with open('files/generatedoutputs/nmf', 'w') as filehandle:
         filehandle.write(str(dict))
-    #print('-------------------------------------------------------')
-    #print(dict)
+
     return str(dict)
